@@ -230,7 +230,6 @@ public class Game extends JPanel {
                         //打败非普通敌机产生道具补给
                         if (enemyAircraft instanceof MobEnemy) continue;
                         int t=random.nextInt(100);
-                        System.out.println("Created a Prop!");
                         if (t<=20){
                             props.add(new LifeProp(
                                     enemyAircraft.getLocationX(),
@@ -254,7 +253,7 @@ public class Game extends JPanel {
             }
         }
 
-        // Todo: 我方获得道具，道具生效
+        // 我方获得道具，道具生效
         for (AbstractProp prop : props){
             if (heroAircraft.crash(prop)){
                 prop.work(heroAircraft);
