@@ -290,7 +290,7 @@ public class Game extends JPanel {
      * 重写paint方法
      * 通过重复调用paint方法，实现游戏动画
      *
-     * @param  g
+     * @param  g Graphics
      */
     @Override
     public void paint(Graphics g) {

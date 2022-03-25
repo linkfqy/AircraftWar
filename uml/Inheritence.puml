@@ -48,7 +48,10 @@ AbstractFlyingObject <|-- AbstractAircraft
 AbstractFlyingObject <|-- BaseBullet
 
 AbstractAircraft <|-- HeroAircraft
-AbstractAircraft <|-- MobEnemy
+AbstractAircraft <|-- EnemyAircraft
+
+EnemyAircraft <|-- MobEnemy
+EnemyAircraft <|-- EliteEnemy
 
 BaseBullet <|-- HeroBullet
 BaseBullet <|-- EnemyBullet
@@ -62,9 +65,20 @@ class HeroAircraft {
     + shoot():List<BaseBullet>
 }
 
-class MobEnemy {
-    + MobEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+abstract class EnemyAircraft {
+    + EnemyAircraft(int locationX, int locationY, int speedX, int speedY)
     + forward():void
+}
+
+class MobEnemy {
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY)
+    + shoot():List<BaseBullet>
+}
+
+class EliteEnemy {
+    - direction:int
+    - power:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY)
     + shoot():List<BaseBullet>
 }
 
