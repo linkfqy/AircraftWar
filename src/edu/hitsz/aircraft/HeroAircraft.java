@@ -33,7 +33,7 @@ public class HeroAircraft extends AbstractAircraft {
         super(locationX, locationY, speedX, speedY, hp);
     }
 
-    /** 使用双抽检查锁定DCL的单例模式*/
+    /** 使用双重检查锁定DCL的单例模式*/
     public static HeroAircraft getInstance() {
         if (instance==null){
             synchronized (HeroAircraft.class){
