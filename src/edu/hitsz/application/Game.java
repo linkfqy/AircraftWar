@@ -56,7 +56,7 @@ public class Game extends JPanel {
     /**
      * 随机数生成器，用于控制生成敌机或道具等事件
      */
-    Random random;
+    private static Random random;
 
 
     public Game() {
@@ -95,13 +95,13 @@ public class Game extends JPanel {
                     int t=random.nextInt(100);
                     if (t<=70){
                         enemyAircrafts.add(new MobEnemy(
-                                (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
+                                (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.get(MobEnemy.class).getWidth())),
                                 (int) (Math.random() * Main.WINDOW_HEIGHT * 0.2),
                                 0,10
                         ));
                     }else{
                         enemyAircrafts.add(new EliteEnemy(
-                                (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.MOB_ENEMY_IMAGE.getWidth())),
+                                (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.get(EliteEnemy.class).getWidth())),
                                 (int) (Math.random() * Main.WINDOW_HEIGHT * 0.2),
                                 0,10
                         ));
@@ -308,8 +308,8 @@ public class Game extends JPanel {
         paintImageWithPositionRevised(g, props);
         paintImageWithPositionRevised(g, enemyAircrafts);
 
-        g.drawImage(ImageManager.HERO_IMAGE, heroAircraft.getLocationX() - ImageManager.HERO_IMAGE.getWidth() / 2,
-                heroAircraft.getLocationY() - ImageManager.HERO_IMAGE.getHeight() / 2, null);
+        g.drawImage(ImageManager.get(HeroAircraft.class), heroAircraft.getLocationX() - ImageManager.get(HeroAircraft.class).getWidth() / 2,
+                heroAircraft.getLocationY() - ImageManager.get(HeroAircraft.class).getHeight() / 2, null);
 
         //绘制得分和生命值
         paintScoreAndLife(g);

@@ -17,6 +17,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Map.entry;
+
 /**
  * 综合管理图片的加载，访问
  * 提供图片的静态访问方法
@@ -30,39 +32,37 @@ public class ImageManager {
      * 可使用 CLASSNAME_IMAGE_MAP.get( obj.getClass().getName() ) 获得 obj 所属基类对应的图片
      */
     private static final Map<String, BufferedImage> CLASSNAME_IMAGE_MAP = new HashMap<>();
+    /**
+     * 类-图片文件名 映射，由此生成CLASSNAME_IMAGE_MAP，避免手动映射的冗长写法
+     */
+    private static final Map<Class<?>, String> CLASS_FILENAME_MAP = Map.ofEntries(
+            entry(HeroAircraft.class,"hero.png"),
+            entry(MobEnemy.class,"mob.png"),
+            entry(EliteEnemy.class,"elite.png"),
+            entry(HeroBullet.class,"bullet_hero.png"),
+            entry(EnemyBullet.class,"bullet_enemy.png"),
+            entry(LifeProp.class,"prop_life.png"),
+            entry(BombProp.class,"prop_bomb.png"),
+            entry(FireProp.class,"prop_fire.png")
+    );
+    /**
+     * 图片文件所在路径
+     */
+    private static final String imgPath="src/images/";
 
     public static BufferedImage BACKGROUND_IMAGE;
-    public static BufferedImage HERO_IMAGE;
-    public static BufferedImage MOB_ENEMY_IMAGE;
-    public static BufferedImage ELITE_ENEMY_IMAGE;
-    public static BufferedImage HERO_BULLET_IMAGE;
-    public static BufferedImage ENEMY_BULLET_IMAGE;
-    public static BufferedImage LIFE_PROP_IMAGE;
-    public static BufferedImage BOMB_PROP_IMAGE;
-    public static BufferedImage FIRE_PROP_IMAGE;
 
     static {
         try {
 
             BACKGROUND_IMAGE = ImageIO.read(new FileInputStream("src/images/bg.jpg"));
 
-            HERO_IMAGE = ImageIO.read(new FileInputStream("src/images/hero.png"));
-            MOB_ENEMY_IMAGE = ImageIO.read(new FileInputStream("src/images/mob.png"));
-            ELITE_ENEMY_IMAGE = ImageIO.read(new FileInputStream("src/images/elite.png"));
-            HERO_BULLET_IMAGE = ImageIO.read(new FileInputStream("src/images/bullet_hero.png"));
-            ENEMY_BULLET_IMAGE = ImageIO.read(new FileInputStream("src/images/bullet_enemy.png"));
-            LIFE_PROP_IMAGE = ImageIO.read(new FileInputStream("src/images/prop_life.png"));
-            BOMB_PROP_IMAGE = ImageIO.read(new FileInputStream("src/images/prop_bomb.png"));
-            FIRE_PROP_IMAGE = ImageIO.read(new FileInputStream("src/images/prop_fire.png"));
-
-            CLASSNAME_IMAGE_MAP.put(HeroAircraft.class.getName(), HERO_IMAGE);
-            CLASSNAME_IMAGE_MAP.put(MobEnemy.class.getName(), MOB_ENEMY_IMAGE);
-            CLASSNAME_IMAGE_MAP.put(EliteEnemy.class.getName(), ELITE_ENEMY_IMAGE);
-            CLASSNAME_IMAGE_MAP.put(HeroBullet.class.getName(), HERO_BULLET_IMAGE);
-            CLASSNAME_IMAGE_MAP.put(EnemyBullet.class.getName(), ENEMY_BULLET_IMAGE);
-            CLASSNAME_IMAGE_MAP.put(LifeProp.class.getName(), LIFE_PROP_IMAGE);
-            CLASSNAME_IMAGE_MAP.put(BombProp.class.getName(), BOMB_PROP_IMAGE);
-            CLASSNAME_IMAGE_MAP.put(FireProp.class.getName(), FIRE_PROP_IMAGE);
+            for (Map.Entry<Class<?>,String> entry : CLASS_FILENAME_MAP.entrySet()){
+                CLASSNAME_IMAGE_MAP.put(
+                        entry.getKey().getName(),
+                        ImageIO.read(new FileInputStream(imgPath+entry.getValue()))
+                );
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -71,14 +71,19 @@ public class ImageManager {
     }
 
     public static BufferedImage get(String className){
-        return CLASSNAME_IMAGE_MAP.get(className);
+        BufferedImage res = CLASSNAME_IMAGE_MAP.get(className);
+        assert res!=null : className + "has no image!";
+        return res;
     }
 
     public static BufferedImage get(Object obj){
-        if (obj == null){
-            return null;
-        }
+        assert obj!=null : "ImageManager received a null get";
         return get(obj.getClass().getName());
+    }
+
+    public static BufferedImage get(Class<?> cls){
+        assert cls!=null : "ImageManager received a null get";
+        return get(cls.getName());
     }
 
 }
