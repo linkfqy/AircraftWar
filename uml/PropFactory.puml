@@ -1,3 +1,57 @@
 @startuml
+abstract class PropFactory {
+    + {abstract} create(EnemyAircraft ea):AbstractProp
+    + {abstract} create(int locationX, int locationY):AbstractProp
+}
+class FirePropFactory {
+    + create(EnemyAircraft ea):FireProp
+    + create(int locationX, int locationY):FireProp
+}
+class LifePropFactory {
+    + create(EnemyAircraft ea):LifeProp
+    + create(int locationX, int locationY):LifeProp
+}
+class BombPropFactory {
+    + create(EnemyAircraft ea):BombProp
+    + create(int locationX, int locationY):BombProp
+}
 
+PropFactory <|-- FirePropFactory
+PropFactory <|-- LifePropFactory
+PropFactory <|-- BombPropFactory
+
+abstract class AbstractProp {
+    + AbstractProp(int locationX, int locationY, int speedX, int speedY)
+    + forward():void
+    + work(AbstractAircraft aircraft):void
+}
+
+class LifeProp {
+    + LifeProp(int locationX, int locationY, int speedX, int speedY)
+    + work(AbstractAircraft aircraft):void
+}
+
+class BombProp {
+    + BombProp(int locationX, int locationY, int speedX, int speedY)
+    + work(AbstractAircraft aircraft):void
+}
+
+class FireProp {
+    + BombProp(int locationX, int locationY, int speedX, int speedY)
+    + work(AbstractAircraft aircraft):void
+}
+
+AbstractProp <|-- LifeProp
+AbstractProp <|-- BombProp
+AbstractProp <|-- FireProp
+LifePropFactory ..> LifeProp : <<create>>
+BombPropFactory ..> BombProp : <<create>>
+FirePropFactory ..> FireProp : <<create>>
+
+class Game {
+    + action():void
+}
+
+Game ..> PropFactory
+Game ..> AbstractProp
 @enduml

@@ -1,3 +1,54 @@
 @startuml
+abstract class EnemyFactory{
+    + {abstract} create():EnemyAircraft
+}
+class MobEnemyFactory{
+    + create():MobEnemy
+}
+class EliteEnemyFactory{
+    + create():EliteEnemy
+}
+class BossEnemyFactory{
+    + create():BossEnemy
+}
 
+EnemyFactory <|-- MobEnemyFactory
+EnemyFactory <|-- EliteEnemyFactory
+EnemyFactory <|-- BossEnemyFactory
+
+abstract class EnemyAircraft {
+    + EnemyAircraft(int locationX, int locationY, int speedX, int speedY)
+    + forward():void
+}
+
+class MobEnemy {
+    + MobEnemy(int locationX, int locationY, int speedX, int speedY)
+    + shoot():List<BaseBullet>
+}
+
+class EliteEnemy {
+    - direction:int
+    - power:int
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY)
+    + shoot():List<BaseBullet>
+}
+
+class BossEnemy {
+    + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
+    + shoot():List<BaseBullet>
+}
+
+EnemyAircraft <|-- MobEnemy
+EnemyAircraft <|-- EliteEnemy
+EnemyAircraft <|-- BossEnemy
+MobEnemyFactory ..> MobEnemy : <<create>>
+EliteEnemyFactory ..> EliteEnemy : <<create>>
+BossEnemyFactory ..> BossEnemy : <<create>>
+
+class Game {
+    + action():void
+}
+
+Game ..> EnemyFactory
+Game ..> EnemyAircraft
 @enduml

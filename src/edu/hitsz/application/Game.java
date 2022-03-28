@@ -3,10 +3,8 @@ package edu.hitsz.application;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
+import edu.hitsz.factory.*;
 import edu.hitsz.prop.AbstractProp;
-import edu.hitsz.prop.BombProp;
-import edu.hitsz.prop.FireProp;
-import edu.hitsz.prop.LifeProp;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,7 +33,7 @@ public class Game extends JPanel {
     private final int timeInterval = 40;
 
     private final HeroAircraft heroAircraft;
-    private final List<AbstractAircraft> enemyAircrafts;
+    private final List<EnemyAircraft> enemyAircrafts;
     private final List<BaseBullet> heroBullets;
     private final List<BaseBullet> enemyBullets;
     private final List<AbstractProp> props;
@@ -56,8 +54,48 @@ public class Game extends JPanel {
     /**
      * 随机数生成器，用于控制生成敌机或道具等事件
      */
-    private static Random random;
+    private static Random rand;
 
+    /**
+     * 敌机工厂列表，依概率生成敌机
+     */
+    private final List<EnemyFactory> enemyFactories = List.of(
+            new MobEnemyFactory(),
+            new EliteEnemyFactory()
+    );
+    /**
+     * 敌机概率列表，表示各敌机生成的概率（以100为单位）
+     */
+    private final List<Integer> enemyProb = List.of(70,30);
+
+    /**
+     * 道具工厂列表，依概率生成道具
+     */
+    private final List<PropFactory> propFactories = List.of(
+            new LifePropFactory(),
+            new BombPropFactory(),
+            new FirePropFactory()
+    );
+    /**
+     * 道具概率列表，表示各道具生成的概率（以100为单位）
+     */
+    private final List<Integer> propProb = List.of(20,20,10);
+
+    /**
+     * 随机选择器
+     * @param PList 概率列表（以100为单位），代表每个下标被选择的概率
+     * @return 选择的下标
+     */
+    private int selectRandomly(List<Integer> PList) {
+        int p=rand.nextInt(100);
+        int sum = 0;
+        for (int i=0;i<PList.size();i++) {
+            sum=sum+PList.get(i);
+            if (p<=sum) return i;
+        }
+        // 默认“什么都不选”
+        return -1;
+    }
 
     public Game() {
         heroAircraft = HeroAircraft.getInstance();
@@ -67,7 +105,8 @@ public class Game extends JPanel {
         enemyBullets = new LinkedList<>();
         props = new LinkedList<>();
 
-        random = new Random();
+        //随机生成器初始化
+        rand = new Random();
 
         //Scheduled 线程池，用于定时任务调度
         executorService = new ScheduledThreadPoolExecutor(1);
@@ -92,20 +131,8 @@ public class Game extends JPanel {
                 System.out.println(time);
                 // 新敌机产生
                 if (enemyAircrafts.size() < enemyMaxNumber) {
-                    int t=random.nextInt(100);
-                    if (t<=70){
-                        enemyAircrafts.add(new MobEnemy(
-                                (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.get(MobEnemy.class).getWidth())),
-                                (int) (Math.random() * Main.WINDOW_HEIGHT * 0.2),
-                                0,10
-                        ));
-                    }else{
-                        enemyAircrafts.add(new EliteEnemy(
-                                (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.get(EliteEnemy.class).getWidth())),
-                                (int) (Math.random() * Main.WINDOW_HEIGHT * 0.2),
-                                0,10
-                        ));
-                    }
+                    //依概率随机产生敌机
+                    enemyAircrafts.add(enemyFactories.get(selectRandomly(enemyProb)).create());
                 }
                 // 飞机射出子弹
                 shootAction();
@@ -165,7 +192,7 @@ public class Game extends JPanel {
 
     private void shootAction() {
         // 敌机射击
-        for (AbstractAircraft enemyAircraft : enemyAircrafts){
+        for (EnemyAircraft enemyAircraft : enemyAircrafts){
             enemyBullets.addAll(enemyAircraft.shoot());
         }
 
@@ -183,7 +210,7 @@ public class Game extends JPanel {
     }
 
     private void aircraftMoveAction() {
-        for (AbstractAircraft enemyAircraft : enemyAircrafts) {
+        for (EnemyAircraft enemyAircraft : enemyAircrafts) {
             enemyAircraft.forward();
         }
     }
@@ -212,7 +239,7 @@ public class Game extends JPanel {
         }
 
         // 敌机撞英雄子弹或英雄机
-        for (AbstractAircraft enemyAircraft : enemyAircrafts) {
+        for (EnemyAircraft enemyAircraft : enemyAircrafts) {
             if (enemyAircraft.notValid()) continue;  // 已被其他子弹击毁的敌机，不再检测，避免多个子弹重复击毁同一敌机的判定
             for (BaseBullet bullet : heroBullets) {
                 if (bullet.notValid()) continue;
@@ -226,20 +253,9 @@ public class Game extends JPanel {
                         score += 10;
                         //打败非普通敌机产生道具补给
                         if (enemyAircraft instanceof MobEnemy) continue;
-                        int t=random.nextInt(100);
-                        if (t<=20){
-                            props.add(new LifeProp(
-                                    enemyAircraft.getLocationX(),
-                                    enemyAircraft.getLocationY()));
-                        }else if (t<=40){
-                            props.add(new BombProp(
-                                    enemyAircraft.getLocationX(),
-                                    enemyAircraft.getLocationY()));
-                        }else if (t<=50){
-                            props.add(new FireProp(
-                                    enemyAircraft.getLocationX(),
-                                    enemyAircraft.getLocationY()));
-                        }
+                        try {
+                            props.add(propFactories.get(selectRandomly(propProb)).create(enemyAircraft));
+                        }catch (IndexOutOfBoundsException ignored){}
                     }
                 }
             }

@@ -3,13 +3,14 @@ class HeroAircraft {
     - shootNum:int
     - power:int
     - direction:int
-    - {static} instance HeroAircraft
-    - {static} HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    - {static} instance:HeroAircraft
+    - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + {static} getInstance():HeroAircraft
     + forward():void
     + shoot():List<BaseBullet>
 }
 class Game {
-
+    + action():void
 }
 HeroAircraft <-- Game
 HeroAircraft <-- HeroAircraft
