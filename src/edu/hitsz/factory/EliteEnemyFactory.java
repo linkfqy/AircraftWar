@@ -4,7 +4,10 @@ import edu.hitsz.aircraft.EliteEnemy;
 import edu.hitsz.application.ImageManager;
 import edu.hitsz.application.Main;
 
-public class EliteEnemyFactory extends EnemyFactory {
+/**
+ * @author linkfqy
+ */
+public class EliteEnemyFactory extends AbstractEnemyFactory {
     @Override
     public EliteEnemy create() {
         return new EliteEnemy(

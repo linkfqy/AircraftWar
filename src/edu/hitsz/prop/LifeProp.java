@@ -2,8 +2,11 @@ package edu.hitsz.prop;
 
 import edu.hitsz.aircraft.AbstractAircraft;
 
+/**
+ * @author linkfqy
+ */
 public class LifeProp extends AbstractProp {
-    //默认加血量
+    /** 默认加血量 */
     int incHp=50;
 
     public LifeProp (int locationX, int locationY, int speedX, int speedY){

@@ -1,11 +1,14 @@
 package edu.hitsz.factory;
 
-import edu.hitsz.aircraft.EnemyAircraft;
+import edu.hitsz.aircraft.AbstractEnemy;
 import edu.hitsz.prop.LifeProp;
 
-public class LifePropFactory extends PropFactory{
+/**
+ * @author linkfqy
+ */
+public class LifePropFactory extends AbstractPropFactory {
     @Override
-    public LifeProp create(EnemyAircraft ea) {
+    public LifeProp create(AbstractEnemy ea) {
         return new LifeProp(ea.getLocationX(),ea.getLocationY());
     }
 

@@ -1,6 +1,6 @@
 @startuml
-abstract class EnemyFactory{
-    + {abstract} create():EnemyAircraft
+abstract class AbstractEnemyFactory{
+    + {abstract} create():AbstractEnemy
 }
 class MobEnemyFactory{
     + create():MobEnemy
@@ -12,12 +12,12 @@ class BossEnemyFactory{
     + create():BossEnemy
 }
 
-EnemyFactory <|-- MobEnemyFactory
-EnemyFactory <|-- EliteEnemyFactory
-EnemyFactory <|-- BossEnemyFactory
+AbstractEnemyFactory <|-- MobEnemyFactory
+AbstractEnemyFactory <|-- EliteEnemyFactory
+AbstractEnemyFactory <|-- BossEnemyFactory
 
-abstract class EnemyAircraft {
-    + EnemyAircraft(int locationX, int locationY, int speedX, int speedY)
+abstract class AbstractEnemy {
+    + AbstractEnemy(int locationX, int locationY, int speedX, int speedY)
     + forward():void
 }
 
@@ -38,19 +38,19 @@ class BossEnemy {
     + shoot():List<BaseBullet>
 }
 
-EnemyAircraft <|-- MobEnemy
-EnemyAircraft <|-- EliteEnemy
-EnemyAircraft <|-- BossEnemy
+AbstractEnemy <|-- MobEnemy
+AbstractEnemy <|-- EliteEnemy
+AbstractEnemy <|-- BossEnemy
 MobEnemyFactory ..> MobEnemy : <<create>>
 EliteEnemyFactory ..> EliteEnemy : <<create>>
 BossEnemyFactory ..> BossEnemy : <<create>>
 
 class Game {
-    - enemyAircrafts:List<EnemyAircraft>
-    - enemyFactories:List<EnemyFactory>
+    - enemyAircrafts:List<AbstractEnemy>
+    - enemyFactories:List<AbstractEnemyFactory>
     + action():void
 }
 
-Game --> EnemyFactory
-Game --> EnemyAircraft
+Game --> AbstractEnemyFactory
+Game --> AbstractEnemy
 @enduml

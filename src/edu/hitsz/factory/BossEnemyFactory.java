@@ -2,7 +2,10 @@ package edu.hitsz.factory;
 
 import edu.hitsz.aircraft.BossEnemy;
 
-public class BossEnemyFactory extends EnemyFactory {
+/**
+ * @author linkfqy
+ */
+public class BossEnemyFactory extends AbstractEnemyFactory {
     @Override
     public BossEnemy create() {
         return null;

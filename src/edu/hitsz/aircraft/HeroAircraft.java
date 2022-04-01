@@ -14,10 +14,13 @@ import java.util.List;
  */
 public class HeroAircraft extends AbstractAircraft {
 
-    /** 攻击方式 */
-    private int shootNum = 1;     //子弹一次发射数量
-    private int power = 30;       //子弹伤害
-    private int direction = -1;  //子弹射击方向 (向上发射：1，向下发射：-1)
+    // 攻击方式
+    /** 子弹一次发射数量 */
+    private int shootNum = 1;
+    /** 子弹伤害 */
+    private int power = 30;
+    /** 子弹射击方向 (向上发射：1，向下发射：-1) */
+    private int direction = -1;
 
     /** 单例模式的唯一实例*/
     private volatile static HeroAircraft instance = null;
@@ -37,11 +40,12 @@ public class HeroAircraft extends AbstractAircraft {
     public static HeroAircraft getInstance() {
         if (instance==null){
             synchronized (HeroAircraft.class){
-                if (instance==null)
+                if (instance==null) {
                     instance = new HeroAircraft(
                             Main.WINDOW_WIDTH / 2,
                             Main.WINDOW_HEIGHT - ImageManager.get(HeroAircraft.class).getHeight() ,
                             0, 0, 100);
+                }
             }
         }
         return instance;

@@ -2,6 +2,9 @@ package edu.hitsz.prop;
 
 import edu.hitsz.aircraft.AbstractAircraft;
 
+/**
+ * @author linkfqy
+ */
 public class FireProp extends AbstractProp {
     public FireProp (int locationX, int locationY, int speedX, int speedY){
         super(locationX,locationY,speedX,speedY);

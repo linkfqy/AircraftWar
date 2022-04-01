@@ -48,7 +48,7 @@ public class ImageManager {
     /**
      * 图片文件所在路径
      */
-    private static final String imgPath="src/images/";
+    private static final String IMG_PATH ="src/images/";
 
     public static BufferedImage BACKGROUND_IMAGE;
 
@@ -60,7 +60,7 @@ public class ImageManager {
             for (Map.Entry<Class<?>,String> entry : CLASS_FILENAME_MAP.entrySet()){
                 CLASSNAME_IMAGE_MAP.put(
                         entry.getKey().getName(),
-                        ImageIO.read(new FileInputStream(imgPath+entry.getValue()))
+                        ImageIO.read(new FileInputStream(IMG_PATH +entry.getValue()))
                 );
             }
 

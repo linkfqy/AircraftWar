@@ -33,7 +33,7 @@ public class Game extends JPanel {
     private final int timeInterval = 40;
 
     private final HeroAircraft heroAircraft;
-    private final List<EnemyAircraft> enemyAircrafts;
+    private final List<AbstractEnemy> enemyAircrafts;
     private final List<BaseBullet> heroBullets;
     private final List<BaseBullet> enemyBullets;
     private final List<AbstractProp> props;
@@ -46,8 +46,8 @@ public class Game extends JPanel {
     /**
      * 周期（ms)
      * 指示子弹的发射、敌机的产生频率
+     * TODO 敌我双方发射频率不同，与敌机产生频率也应不同
      */
-    //TODO 敌我双方发射频率不同，与敌机产生频率也应不同
     private int cycleDuration = 600;
     private int cycleTime = 0;
 
@@ -59,7 +59,7 @@ public class Game extends JPanel {
     /**
      * 敌机工厂列表，依概率生成敌机
      */
-    private final List<EnemyFactory> enemyFactories = List.of(
+    private final List<AbstractEnemyFactory> enemyFactories = List.of(
             new MobEnemyFactory(),
             new EliteEnemyFactory()
     );
@@ -71,7 +71,7 @@ public class Game extends JPanel {
     /**
      * 道具工厂列表，依概率生成道具
      */
-    private final List<PropFactory> propFactories = List.of(
+    private final List<AbstractPropFactory> propFactories = List.of(
             new LifePropFactory(),
             new BombPropFactory(),
             new FirePropFactory()
@@ -83,15 +83,17 @@ public class Game extends JPanel {
 
     /**
      * 随机选择器
-     * @param PList 概率列表（以100为单位），代表每个下标被选择的概率
+     * @param pList 概率列表（以100为单位），代表每个下标被选择的概率
      * @return 选择的下标
      */
-    private int selectRandomly(List<Integer> PList) {
+    private int selectRandomly(List<Integer> pList) {
         int p=rand.nextInt(100);
         int sum = 0;
-        for (int i=0;i<PList.size();i++) {
-            sum=sum+PList.get(i);
-            if (p<=sum) return i;
+        for (int i=0;i<pList.size();i++) {
+            sum=sum+pList.get(i);
+            if (p<=sum) {
+                return i;
+            }
         }
         // 默认“什么都不选”
         return -1;
@@ -108,8 +110,16 @@ public class Game extends JPanel {
         //随机生成器初始化
         rand = new Random();
 
+        ThreadFactory gameThread = new ThreadFactory() {
+            @Override
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r);
+                t.setName("Game thread");
+                return t;
+            }
+        };
         //Scheduled 线程池，用于定时任务调度
-        executorService = new ScheduledThreadPoolExecutor(1);
+        executorService = new ScheduledThreadPoolExecutor(1, gameThread);
 
         //启动英雄机鼠标监听
         new HeroController(this, heroAircraft);
@@ -192,7 +202,7 @@ public class Game extends JPanel {
 
     private void shootAction() {
         // 敌机射击
-        for (EnemyAircraft enemyAircraft : enemyAircrafts){
+        for (AbstractEnemy enemyAircraft : enemyAircrafts){
             enemyBullets.addAll(enemyAircraft.shoot());
         }
 
@@ -210,7 +220,7 @@ public class Game extends JPanel {
     }
 
     private void aircraftMoveAction() {
-        for (EnemyAircraft enemyAircraft : enemyAircrafts) {
+        for (AbstractEnemy enemyAircraft : enemyAircrafts) {
             enemyAircraft.forward();
         }
     }
@@ -231,7 +241,9 @@ public class Game extends JPanel {
     private void crashCheckAction() {
         // 敌机子弹攻击英雄
         for (BaseBullet bullet : enemyBullets) {
-            if (bullet.notValid()) continue;
+            if (bullet.notValid()) {
+                continue;
+            }
             if (heroAircraft.crash(bullet)) {
                 heroAircraft.decreaseHp(bullet.getPower());
                 bullet.vanish();
@@ -239,10 +251,14 @@ public class Game extends JPanel {
         }
 
         // 敌机撞英雄子弹或英雄机
-        for (EnemyAircraft enemyAircraft : enemyAircrafts) {
-            if (enemyAircraft.notValid()) continue;  // 已被其他子弹击毁的敌机，不再检测，避免多个子弹重复击毁同一敌机的判定
+        for (AbstractEnemy enemyAircraft : enemyAircrafts) {
+            if (enemyAircraft.notValid()) {
+                continue;  // 已被其他子弹击毁的敌机，不再检测，避免多个子弹重复击毁同一敌机的判定
+            }
             for (BaseBullet bullet : heroBullets) {
-                if (bullet.notValid()) continue;
+                if (bullet.notValid()) {
+                    continue;
+                }
                 if (enemyAircraft.crash(bullet)) {
                     // 敌机撞击到英雄机子弹
                     // 敌机损失一定生命值
@@ -252,7 +268,9 @@ public class Game extends JPanel {
                         // TODO 不同敌机获得分数不同
                         score += 10;
                         //打败非普通敌机产生道具补给
-                        if (enemyAircraft instanceof MobEnemy) continue;
+                        if (enemyAircraft instanceof MobEnemy) {
+                            continue;
+                        }
                         try {
                             props.add(propFactories.get(selectRandomly(propProb)).create(enemyAircraft));
                         }catch (IndexOutOfBoundsException ignored){}

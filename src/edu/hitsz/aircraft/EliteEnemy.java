@@ -1,13 +1,15 @@
 package edu.hitsz.aircraft;
 
-import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.bullet.EnemyBullet;
 
 import java.util.LinkedList;
 import java.util.List;
 
-public class EliteEnemy extends EnemyAircraft{
+/**
+ * @author linkfqy
+ */
+public class EliteEnemy extends AbstractEnemy {
     private int direction=1;
     private int power=30;
     public EliteEnemy (int locationX, int locationY, int speedX, int speedY){

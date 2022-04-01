@@ -1,11 +1,14 @@
 package edu.hitsz.factory;
 
-import edu.hitsz.aircraft.EnemyAircraft;
+import edu.hitsz.aircraft.AbstractEnemy;
 import edu.hitsz.prop.BombProp;
 
-public class BombPropFactory extends PropFactory{
+/**
+ * @author linkfqy
+ */
+public class BombPropFactory extends AbstractPropFactory {
     @Override
-    public BombProp create(EnemyAircraft ea) {
+    public BombProp create(AbstractEnemy ea) {
         return new BombProp(ea.getLocationX(),ea.getLocationY());
     }
 

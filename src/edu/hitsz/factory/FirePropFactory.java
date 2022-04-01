@@ -1,11 +1,14 @@
 package edu.hitsz.factory;
 
-import edu.hitsz.aircraft.EnemyAircraft;
+import edu.hitsz.aircraft.AbstractEnemy;
 import edu.hitsz.prop.FireProp;
 
-public class FirePropFactory extends PropFactory{
+/**
+ * @author linkfqy
+ */
+public class FirePropFactory extends AbstractPropFactory {
     @Override
-    public FireProp create(EnemyAircraft ea) {
+    public FireProp create(AbstractEnemy ea) {
         return new FireProp(ea.getLocationX(),ea.getLocationY());
     }
 

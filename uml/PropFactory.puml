@@ -1,5 +1,5 @@
 @startuml
-abstract class PropFactory {
+abstract class AbstractPropFactory {
     + {abstract} create(EnemyAircraft ea):AbstractProp
     + {abstract} create(int locationX, int locationY):AbstractProp
 }
@@ -16,9 +16,9 @@ class BombPropFactory {
     + create(int locationX, int locationY):BombProp
 }
 
-PropFactory <|-- FirePropFactory
-PropFactory <|-- LifePropFactory
-PropFactory <|-- BombPropFactory
+AbstractPropFactory <|-- FirePropFactory
+AbstractPropFactory <|-- LifePropFactory
+AbstractPropFactory <|-- BombPropFactory
 
 abstract class AbstractProp {
     + AbstractProp(int locationX, int locationY, int speedX, int speedY)
@@ -50,10 +50,10 @@ FirePropFactory ..> FireProp : <<create>>
 
 class Game {
     - props:List<AbstractProp>
-    - propFactories:List<PropFactory>
+    - propFactories:List<AbstractPropFactory>
     + action():void
 }
 
-Game --> PropFactory
+Game --> AbstractPropFactory
 Game --> AbstractProp
 @enduml

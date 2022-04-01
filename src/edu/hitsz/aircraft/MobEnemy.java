@@ -1,6 +1,5 @@
 package edu.hitsz.aircraft;
 
-import edu.hitsz.application.Main;
 import edu.hitsz.bullet.BaseBullet;
 
 import java.util.LinkedList;
@@ -12,7 +11,7 @@ import java.util.List;
  *
  * @author hitsz
  */
-public class MobEnemy extends EnemyAircraft {
+public class MobEnemy extends AbstractEnemy {
     public MobEnemy(int locationX, int locationY, int speedX, int speedY) {
         super(locationX, locationY, speedX, speedY, 30);
     }
