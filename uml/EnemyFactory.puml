@@ -46,9 +46,11 @@ EliteEnemyFactory ..> EliteEnemy : <<create>>
 BossEnemyFactory ..> BossEnemy : <<create>>
 
 class Game {
+    - enemyAircrafts:List<EnemyAircraft>
+    - enemyFactories:List<EnemyFactory>
     + action():void
 }
 
-Game ..> EnemyFactory
-Game ..> EnemyAircraft
+Game --> EnemyFactory
+Game --> EnemyAircraft
 @enduml

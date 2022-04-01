@@ -49,9 +49,11 @@ BombPropFactory ..> BombProp : <<create>>
 FirePropFactory ..> FireProp : <<create>>
 
 class Game {
+    - props:List<AbstractProp>
+    - propFactories:List<PropFactory>
     + action():void
 }
 
-Game ..> PropFactory
-Game ..> AbstractProp
+Game --> PropFactory
+Game --> AbstractProp
 @enduml

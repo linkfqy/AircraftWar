@@ -10,6 +10,7 @@ class HeroAircraft {
     + shoot():List<BaseBullet>
 }
 class Game {
+    - heroAircraft:HeroAircraft
     + action():void
 }
 HeroAircraft <-- Game
