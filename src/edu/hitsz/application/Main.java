@@ -2,6 +2,7 @@ package edu.hitsz.application;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Random;
 
 /**
  * 程序入口
@@ -11,6 +12,11 @@ public class Main {
 
     public static final int WINDOW_WIDTH = 512;
     public static final int WINDOW_HEIGHT = 768;
+
+    /**
+     * 随机数生成器，用于控制生成敌机或道具等事件
+     */
+    public static final Random RAND =new Random();
 
     public static void main(String[] args) {
 

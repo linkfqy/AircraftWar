@@ -10,10 +10,8 @@ import java.util.List;
  * @author linkfqy
  */
 public class EliteEnemy extends AbstractEnemy {
-    private int direction=1;
-    private int power=30;
-    public EliteEnemy (int locationX, int locationY, int speedX, int speedY){
-        super(locationX, locationY, speedX, speedY, 50);
+    public EliteEnemy (int locationX, int locationY, int speedX, int speedY,int hp){
+        super(locationX, locationY, speedX, speedY, hp);
     }
 
     @Override
@@ -21,9 +19,14 @@ public class EliteEnemy extends AbstractEnemy {
         int x = this.getLocationX();
         int y = this.getLocationY();
         int vx = 0;
-        int vy = this.getSpeedY() + direction*5;
+        int vy = this.getSpeedY() + DIRECTION *5;
         List<BaseBullet> res=new LinkedList<>();
         res.add(new EnemyBullet(x,y,vx,vy,power));
         return res;
+    }
+
+    @Override
+    public int getScore() {
+        return 30;
     }
 }

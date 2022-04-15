@@ -1,6 +1,7 @@
 package edu.hitsz.application;
 
 
+import edu.hitsz.aircraft.BossEnemy;
 import edu.hitsz.aircraft.EliteEnemy;
 import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.aircraft.MobEnemy;
@@ -39,6 +40,7 @@ public class ImageManager {
             entry(HeroAircraft.class,"hero.png"),
             entry(MobEnemy.class,"mob.png"),
             entry(EliteEnemy.class,"elite.png"),
+            entry(BossEnemy.class,"boss.png"),
             entry(HeroBullet.class,"bullet_hero.png"),
             entry(EnemyBullet.class,"bullet_enemy.png"),
             entry(LifeProp.class,"prop_life.png"),

@@ -12,7 +12,7 @@ public abstract class AbstractProp extends AbstractFlyingObject {
         super(locationX,locationY,speedX,speedY);
     }
     public AbstractProp(int locationX, int locationY){
-        super(locationX,locationY,5,5);
+        super(locationX,locationY,(Main.RAND.nextInt(2)*2-1)*5,5);
     }
 
     /**
@@ -26,11 +26,11 @@ public abstract class AbstractProp extends AbstractFlyingObject {
     @Override
     public void forward() {
         super.forward();
-        if (locationX <= 0 || locationX >= Main.WINDOW_WIDTH) {
+        if (locationX <= 0 || locationX+this.getWidth() >= Main.WINDOW_WIDTH) {
             // 横向超出边界后反向
             speedX = -speedX;
         }
-        if (locationY <= 0 || locationY >= Main.WINDOW_HEIGHT) {
+        if (locationY <= 0 || locationY+this.getHeight() >= Main.WINDOW_HEIGHT) {
             // 纵向超出边界后反向
             speedY = -speedY;
         }

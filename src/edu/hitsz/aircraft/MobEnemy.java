@@ -12,8 +12,8 @@ import java.util.List;
  * @author hitsz
  */
 public class MobEnemy extends AbstractEnemy {
-    public MobEnemy(int locationX, int locationY, int speedX, int speedY) {
-        super(locationX, locationY, speedX, speedY, 30);
+    public MobEnemy(int locationX, int locationY, int speedX, int speedY,int hp) {
+        super(locationX, locationY, speedX, speedY, hp);
     }
 
 
@@ -22,4 +22,8 @@ public class MobEnemy extends AbstractEnemy {
         return new LinkedList<>();
     }
 
+    @Override
+    public int getScore() {
+        return 10;
+    }
 }

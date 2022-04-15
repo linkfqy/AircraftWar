@@ -42,6 +42,15 @@ public class Game extends JPanel {
 
     private boolean gameOverFlag = false;
     private int score = 0;
+    /**
+     * Boss机最后一次被打爆时的分数，score-lastScore>=SCORE2GEN_BOSS，且无Boss机时产生新的Boss机
+     */
+    private int lastScore = 0;
+    /**
+     * 场上是否还有Boss的存活标志
+     */
+    private boolean bossAlive = false;
+    private final int SCORE2GEN_BOSS=300;
     private int time = 0;
     /**
      * 周期（ms)
@@ -50,11 +59,6 @@ public class Game extends JPanel {
      */
     private int cycleDuration = 600;
     private int cycleTime = 0;
-
-    /**
-     * 随机数生成器，用于控制生成敌机或道具等事件
-     */
-    private static Random rand;
 
     /**
      * 敌机工厂列表，依概率生成敌机
@@ -67,6 +71,7 @@ public class Game extends JPanel {
      * 敌机概率列表，表示各敌机生成的概率（以100为单位）
      */
     private final List<Integer> enemyProb = List.of(70,30);
+    private final BossEnemyFactory bossEnemyFactory = new BossEnemyFactory();
 
     /**
      * 道具工厂列表，依概率生成道具
@@ -79,7 +84,7 @@ public class Game extends JPanel {
     /**
      * 道具概率列表，表示各道具生成的概率（以100为单位）
      */
-    private final List<Integer> propProb = List.of(20,20,10);
+    private final List<Integer> propProb = List.of(30,30,30);
 
     /**
      * 随机选择器
@@ -87,7 +92,7 @@ public class Game extends JPanel {
      * @return 选择的下标
      */
     private int selectRandomly(List<Integer> pList) {
-        int p=rand.nextInt(100);
+        int p=Main.RAND.nextInt(100);
         int sum = 0;
         for (int i=0;i<pList.size();i++) {
             sum=sum+pList.get(i);
@@ -107,8 +112,6 @@ public class Game extends JPanel {
         enemyBullets = new LinkedList<>();
         props = new LinkedList<>();
 
-        //随机生成器初始化
-        rand = new Random();
 
         ThreadFactory gameThread = new ThreadFactory() {
             @Override
@@ -141,8 +144,14 @@ public class Game extends JPanel {
                 System.out.println(time);
                 // 新敌机产生
                 if (enemyAircrafts.size() < enemyMaxNumber) {
+                    // 积累一定分数，且场上无Boss机时产生新的Boss机
+                    if (score-lastScore>=SCORE2GEN_BOSS && !bossAlive){
+                        enemyAircrafts.add(bossEnemyFactory.create());
+                    }
                     //依概率随机产生敌机
-                    enemyAircrafts.add(enemyFactories.get(selectRandomly(enemyProb)).create());
+                    else {
+                        enemyAircrafts.add(enemyFactories.get(selectRandomly(enemyProb)).create());
+                    }
                 }
                 // 飞机射出子弹
                 shootAction();
@@ -265,8 +274,7 @@ public class Game extends JPanel {
                     enemyAircraft.decreaseHp(bullet.getPower());
                     bullet.vanish();
                     if (enemyAircraft.notValid()) {
-                        // TODO 不同敌机获得分数不同
-                        score += 10;
+                        score += enemyAircraft.getScore();
                         //打败非普通敌机产生道具补给
                         if (enemyAircraft instanceof MobEnemy) {
                             continue;
@@ -298,6 +306,7 @@ public class Game extends JPanel {
      * 2. 删除无效的敌机
      * 3. 删除无效道具
      * 4. 检查英雄机生存
+     * 5. 检查Boss机生存
      * <p>
      * 无效的原因可能是撞击或者飞出边界
      */
@@ -306,6 +315,18 @@ public class Game extends JPanel {
         heroBullets.removeIf(AbstractFlyingObject::notValid);
         enemyAircrafts.removeIf(AbstractFlyingObject::notValid);
         props.removeIf(AbstractFlyingObject::notValid);
+
+        boolean newBossAlive = false;
+        for (AbstractEnemy enemy:enemyAircrafts){
+            if (enemy instanceof BossEnemy){
+                newBossAlive = true;
+                break;
+            }
+        }
+        if (bossAlive && !newBossAlive){
+            lastScore=score;
+        }
+        bossAlive=newBossAlive;
     }
 
     private void debug(){
@@ -342,8 +363,8 @@ public class Game extends JPanel {
         paintImageWithPositionRevised(g, props);
         paintImageWithPositionRevised(g, enemyAircrafts);
 
-        g.drawImage(ImageManager.get(HeroAircraft.class), heroAircraft.getLocationX() - ImageManager.get(HeroAircraft.class).getWidth() / 2,
-                heroAircraft.getLocationY() - ImageManager.get(HeroAircraft.class).getHeight() / 2, null);
+        g.drawImage(ImageManager.get(HeroAircraft.class), heroAircraft.getLocationX() - heroAircraft.getImage().getWidth() / 2,
+                heroAircraft.getLocationY() - heroAircraft.getImage().getHeight() / 2, null);
 
         //绘制得分和生命值
         paintScoreAndLife(g);

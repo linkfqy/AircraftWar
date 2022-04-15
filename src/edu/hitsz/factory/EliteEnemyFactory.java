@@ -13,7 +13,7 @@ public class EliteEnemyFactory extends AbstractEnemyFactory {
         return new EliteEnemy(
                 (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.get(EliteEnemy.class).getWidth())),
                 (int) (Math.random() * Main.WINDOW_HEIGHT * 0.2),
-                0,10
+                (Main.RAND.nextInt(2)*2-1)*BASE_SPEED/2,BASE_SPEED,BASE_HP*5
         );
     }
 }

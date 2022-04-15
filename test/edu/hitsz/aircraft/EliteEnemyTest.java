@@ -24,7 +24,7 @@ class EliteEnemyTest {
     @BeforeEach
     void setUp(TestInfo testInfo) {
         System.out.print(testInfo.getDisplayName()+"...");
-        eliteEnemy = new EliteEnemy(0,0,0,10);
+        eliteEnemy = new EliteEnemy(0,0,0,10,20);
     }
 
     @AfterEach
