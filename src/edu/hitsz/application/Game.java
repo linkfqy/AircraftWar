@@ -3,12 +3,16 @@ package edu.hitsz.application;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
+import edu.hitsz.dao.Record;
+import edu.hitsz.dao.RecordDao;
+import edu.hitsz.dao.RecordDaoImpl;
 import edu.hitsz.factory.*;
 import edu.hitsz.prop.AbstractProp;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -58,6 +62,49 @@ public class Game extends JPanel {
     private CycleManager enemyGenCycle=new CycleManager(600);
     private CycleManager enemyShootCycle=new CycleManager(600);
     private CycleManager heroShootCycle= new CycleManager(150);
+
+    /**
+     * 游戏记录Dao，用于实现排行榜功能
+     */
+    private RecordDao recordDao;
+    private static final String RECORD_DAO_PATH="./Records.dat";
+
+    /**
+     * 从文件读取recordDao
+     */
+    private void readRecordDao(){
+        try {
+            ObjectInputStream ois=new ObjectInputStream(new FileInputStream(RECORD_DAO_PATH));
+            recordDao=(RecordDao) ois.readObject();
+        }catch (FileNotFoundException e){
+            recordDao=new RecordDaoImpl();
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    /**
+     * 向文件写入recordDao
+     */
+    private void writeRecordDao(){
+        try {
+            ObjectOutputStream oos=new ObjectOutputStream(new FileOutputStream(RECORD_DAO_PATH));
+            oos.writeObject(recordDao);
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+    /**
+     * 控制台输出排行榜
+     */
+    private void addAndPrintRanking(){
+        recordDao.add("testUserName",score,new Date());
+        System.out.println("*".repeat(20)+"排行榜"+"*".repeat(20));
+        List<Record> ranking=recordDao.getSorted();
+        for (int i=0;i<ranking.size();i++){
+            Record r=ranking.get(i);
+            System.out.println("第"+(i+1)+"名："+r.getName()+", "+r.getScore()+", "+r.getDate());
+        }
+    }
 
     /**
      * 敌机工厂列表，依概率生成敌机
@@ -110,6 +157,7 @@ public class Game extends JPanel {
         heroBullets = new LinkedList<>();
         enemyBullets = new LinkedList<>();
         props = new LinkedList<>();
+        readRecordDao();
 
 
         ThreadFactory gameThread = new ThreadFactory() {
@@ -174,6 +222,8 @@ public class Game extends JPanel {
                 executorService.shutdown();
                 gameOverFlag = true;
                 System.out.println("Game Over!");
+                addAndPrintRanking();
+                writeRecordDao();
             }
 
         };
