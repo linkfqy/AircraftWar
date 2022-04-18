@@ -6,10 +6,10 @@ import edu.hitsz.application.Main;
  * @author linkfqy
  */
 public abstract class AbstractEnemy extends AbstractAircraft{
-    protected static final int DIRECTION=1;
-    protected int power=10;
     public AbstractEnemy(int locationX, int locationY, int speedX, int speedY, int hp){
         super(locationX, locationY, speedX, speedY, hp);
+        power=10;
+        direction=1;
     }
 
     @Override

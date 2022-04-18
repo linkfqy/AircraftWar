@@ -281,6 +281,7 @@ public class Game extends JPanel {
                         try {
                             props.add(propFactories.get(selectRandomly(propProb)).create(enemyAircraft));
                         }catch (IndexOutOfBoundsException ignored){}
+                        break;
                     }
                 }
             }

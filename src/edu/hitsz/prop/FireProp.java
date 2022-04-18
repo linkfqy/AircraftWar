@@ -1,6 +1,7 @@
 package edu.hitsz.prop;
 
 import edu.hitsz.aircraft.AbstractAircraft;
+import edu.hitsz.strategy.*;
 
 /**
  * @author linkfqy
@@ -16,6 +17,11 @@ public class FireProp extends AbstractProp {
     @Override
     public void work(AbstractAircraft aircraft) {
         super.work(aircraft);
-        System.out.println("FireSupply active!");
+        ShootStrategy strategy=aircraft.getShootStrategy();
+        if (strategy instanceof HeroShootStrategyL1){
+            aircraft.setShootStrategy(new HeroShootStrategyL3());
+        }else if (strategy instanceof HeroShootStrategyL3){
+            aircraft.setShootStrategy(new HeroShootStrategyL5());
+        }
     }
 }
