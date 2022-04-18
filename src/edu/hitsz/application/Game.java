@@ -43,22 +43,21 @@ public class Game extends JPanel {
     private boolean gameOverFlag = false;
     private int score = 0;
     /**
-     * Boss机最后一次被打爆时的分数，score-lastScore>=SCORE2GEN_BOSS，且无Boss机时产生新的Boss机
+     * Boss机最后一次被打爆时的分数，score-lastScore>=bossScoreThreshold，且无Boss机时产生新的Boss机
      */
     private int lastScore = 0;
     /**
      * 场上是否还有Boss的存活标志
      */
     private boolean bossAlive = false;
-    private final int SCORE2GEN_BOSS=300;
+    private int bossScoreThreshold =300;
     private int time = 0;
     /**
-     * 周期（ms)
-     * 指示子弹的发射、敌机的产生频率
-     * TODO 敌我双方发射频率不同，与敌机产生频率也应不同
+     * 敌机生成、敌机射击、本机射击的周期(ms)
      */
-    private int cycleDuration = 600;
-    private int cycleTime = 0;
+    private CycleManager enemyGenCycle=new CycleManager(600);
+    private CycleManager enemyShootCycle=new CycleManager(600);
+    private CycleManager heroShootCycle= new CycleManager(150);
 
     /**
      * 敌机工厂列表，依概率生成敌机
@@ -139,23 +138,14 @@ public class Game extends JPanel {
 
             time += timeInterval;
 
-            // 周期性执行（控制频率）
-            if (timeCountAndNewCycleJudge()) {
-                System.out.println(time);
-                // 新敌机产生
-                if (enemyAircrafts.size() < enemyMaxNumber) {
-                    // 积累一定分数，且场上无Boss机时产生新的Boss机
-                    if (score-lastScore>=SCORE2GEN_BOSS && !bossAlive){
-                        enemyAircrafts.add(bossEnemyFactory.create());
-                    }
-                    //依概率随机产生敌机
-                    else {
-                        enemyAircrafts.add(enemyFactories.get(selectRandomly(enemyProb)).create());
-                    }
-                }
-                // 飞机射出子弹
-                shootAction();
-            }
+            // 周期性生成敌机
+            generateEnemyAction();
+
+            // 敌机周期性射击
+            enemyShootAction();
+
+            // 英雄机周期性射击
+            heroShootAction();
 
             // 子弹移动
             bulletMoveAction();
@@ -198,25 +188,34 @@ public class Game extends JPanel {
     //      Action 各部分
     //***********************
 
-    private boolean timeCountAndNewCycleJudge() {
-        cycleTime += timeInterval;
-        if (cycleTime >= cycleDuration) {
-            // 跨越到新的周期
-            cycleTime %= cycleDuration;
-            return true;
-        } else {
-            return false;
+    private void generateEnemyAction() {
+        if (enemyGenCycle.isNewCycle(time)) {
+            // 新敌机产生
+            if (enemyAircrafts.size() < enemyMaxNumber) {
+                // 积累一定分数，且场上无Boss机时产生新的Boss机
+                if (score-lastScore>= bossScoreThreshold && !bossAlive){
+                    enemyAircrafts.add(bossEnemyFactory.create());
+                }
+                //依概率随机产生敌机
+                else {
+                    enemyAircrafts.add(enemyFactories.get(selectRandomly(enemyProb)).create());
+                }
+            }
         }
     }
 
-    private void shootAction() {
-        // 敌机射击
-        for (AbstractEnemy enemyAircraft : enemyAircrafts){
-            enemyBullets.addAll(enemyAircraft.shoot());
+    private void enemyShootAction() {
+        if (enemyShootCycle.isNewCycle(time)){
+            for (AbstractEnemy enemyAircraft : enemyAircrafts){
+                enemyBullets.addAll(enemyAircraft.shoot());
+            }
         }
+    }
 
-        // 英雄射击
-        heroBullets.addAll(heroAircraft.shoot());
+    private void heroShootAction() {
+        if (heroShootCycle.isNewCycle(time)){
+            heroBullets.addAll(heroAircraft.shoot());
+        }
     }
 
     private void bulletMoveAction() {

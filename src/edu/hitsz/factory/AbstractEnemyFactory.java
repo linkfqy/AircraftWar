@@ -7,9 +7,9 @@ import edu.hitsz.aircraft.AbstractEnemy;
  */
 public abstract class AbstractEnemyFactory {
     /**
-     * 基础血量，简单10，普通15，困难18
+     * 基础血量，简单30，普通45，困难54
      */
-    protected static final int BASE_HP=10;
+    protected static final int BASE_HP=30;
     /**
      * 基础速度，简单5，普通7，困难10
      */
