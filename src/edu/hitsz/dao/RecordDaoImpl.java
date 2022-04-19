@@ -11,8 +11,8 @@ import java.util.List;
  * @author linkfqy
  */
 public class RecordDaoImpl implements RecordDao,Serializable {
-    List<Record> records;
-    int maxId;
+    private final List<Record> records;
+    private int maxId;
     public RecordDaoImpl(){
         records=new LinkedList<>();
         maxId=0;
