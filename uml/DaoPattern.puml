@@ -1,0 +1,40 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class Record{
+    - id:int
+    - name:String
+    - score:int
+    - date:Date
+    + Record(int id,String name,int score,Date date)
+    + getId():int
+    + getName():String
+    + setName(String name):void
+    + getScore():int
+    + setScore(int score):void
+    + getDate():Date
+    + setDate(Date date):void
+}
+interface RecordDao{
+    + {abstract} add(String name, int score, Date date):void
+    + {abstract} deleteById(int recordId):void
+    + {abstract} getSorted():List<Record>
+}
+class RecordDaoImpl{
+    - records:List<Record>
+    - maxId:int
+    + RecordDaoImpl()
+    + add(String name, int score, Date date):void
+    + deleteById(int recordId):void
+    + getSorted():List<Record>
+}
+class Game{
+    - recordDao:RecordDao
+}
+
+RecordDao <|.. RecordDaoImpl
+Record <-- RecordDaoImpl
+Game --> RecordDao
+
+
+@enduml

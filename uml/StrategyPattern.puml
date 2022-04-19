@@ -1,0 +1,49 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+interface ShootStrategy {
+    + {abstract} shoot(AbstractAircraft aircraft):List<BaseBullet>
+}
+
+class EmptyShootStrategy {
+    + shoot(AbstractAircraft aircraft):List<BaseBullet>
+}
+
+class EliteShootStrategy {
+    + shoot(AbstractAircraft aircraft):List<BaseBullet>
+}
+
+class BossShootStrategy {
+    + shoot(AbstractAircraft aircraft):List<BaseBullet>
+}
+
+class HeroShootStrategyL1 {
+    + shoot(AbstractAircraft aircraft):List<BaseBullet>
+}
+
+class HeroShootStrategyL3 {
+    + shoot(AbstractAircraft aircraft):List<BaseBullet>
+}
+
+class HeroShootStrategyL5 {
+    + shoot(AbstractAircraft aircraft):List<BaseBullet>
+}
+
+ShootStrategy <|.. EmptyShootStrategy
+ShootStrategy <|.. EliteShootStrategy
+ShootStrategy <|.. BossShootStrategy
+ShootStrategy <|.. HeroShootStrategyL1
+ShootStrategy <|.. HeroShootStrategyL3
+ShootStrategy <|.. HeroShootStrategyL5
+
+abstract class AbstractAircraft {
+    # shootStrategy:ShootStrategy
+    + getShootStrategy():ShootStrategy
+    + setShootStrategy(ShootStrategy shootStrategy):void
+    + shoot():List<BaseBullet>
+}
+
+AbstractAircraft o--> ShootStrategy
+
+
+@enduml
