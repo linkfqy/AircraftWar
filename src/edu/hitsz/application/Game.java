@@ -7,6 +7,7 @@ import edu.hitsz.dao.Record;
 import edu.hitsz.dao.RecordDao;
 import edu.hitsz.dao.RecordDaoImpl;
 import edu.hitsz.factory.*;
+import edu.hitsz.gui.RankingPanel;
 import edu.hitsz.prop.AbstractProp;
 
 import javax.swing.*;
@@ -222,6 +223,13 @@ public class Game extends JPanel {
                 executorService.shutdown();
                 gameOverFlag = true;
                 System.out.println("Game Over!");
+
+                RankingPanel rankingPanel=new RankingPanel();
+                Container parent=(Container)SwingUtilities.getRoot(this);
+                parent.remove(this);
+                parent.add(rankingPanel.getMainPanel());
+                parent.setVisible(true);
+
                 addAndPrintRanking();
                 writeRecordDao();
             }

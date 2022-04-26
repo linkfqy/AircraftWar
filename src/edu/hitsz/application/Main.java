@@ -1,5 +1,8 @@
 package edu.hitsz.application;
 
+import edu.hitsz.gui.RankingPanel;
+import edu.hitsz.gui.StartPanel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.util.Random;
@@ -19,12 +22,13 @@ public class Main {
     public static final Random RAND =new Random();
 
     public static void main(String[] args) {
+        JFrame frame = new JFrame("Aircraft War");
+        StartPanel startPanel = new StartPanel();
 
         System.out.println("Hello Aircraft War");
 
         // 获得屏幕的分辨率，初始化 Frame
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
-        JFrame frame = new JFrame("Aircraft War");
         frame.setSize(WINDOW_WIDTH, WINDOW_HEIGHT);
         frame.setResizable(false);
         //设置窗口的大小和位置,居中放置
@@ -32,9 +36,8 @@ public class Main {
                 WINDOW_WIDTH, WINDOW_HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        Game game = new Game();
-        frame.add(game);
+        //TODO 使用界面管理器实现不同界面的切换
+        frame.add(startPanel.getMainPanel());
         frame.setVisible(true);
-        game.action();
     }
 }
