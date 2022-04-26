@@ -224,11 +224,7 @@ public class Game extends JPanel {
                 gameOverFlag = true;
                 System.out.println("Game Over!");
 
-                RankingPanel rankingPanel=new RankingPanel();
-                Container parent=(Container)SwingUtilities.getRoot(this);
-                parent.remove(this);
-                parent.add(rankingPanel.getMainPanel());
-                parent.setVisible(true);
+                Main.panelManager.setStatus(PanelManager.Status.RANKING);
 
                 addAndPrintRanking();
                 writeRecordDao();

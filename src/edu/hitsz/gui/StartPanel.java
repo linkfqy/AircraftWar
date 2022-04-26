@@ -1,6 +1,8 @@
 package edu.hitsz.gui;
 
 import edu.hitsz.application.Game;
+import edu.hitsz.application.Main;
+import edu.hitsz.application.PanelManager;
 import edu.hitsz.factory.GameFactory;
 
 import javax.swing.*;
@@ -31,39 +33,21 @@ public class StartPanel {
         easyModeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO 简单模式
-                Container parent = (Container) SwingUtilities.getRoot(mainPanel);
-                Game game= GameFactory.newEasyGame();
-                parent.remove(mainPanel);
-                parent.add(game);
-                parent.setVisible(true);
-                game.action();
+                Main.panelManager.setStatus(PanelManager.Status.EASY_GAME);
             }
         });
         //普通模式按钮的监听器
         normalModeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO 普通模式
-                Container parent = (Container) SwingUtilities.getRoot(mainPanel);
-                Game game= GameFactory.newNormalGame();
-                parent.remove(mainPanel);
-                parent.add(game);
-                parent.setVisible(true);
-                game.action();
+                Main.panelManager.setStatus(PanelManager.Status.NORMAL_GAME);
             }
         });
         //困难模式按钮的监听器
         hardModeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // TODO 困难模式
-                Container parent = (Container) SwingUtilities.getRoot(mainPanel);
-                Game game= GameFactory.newHardGame();
-                parent.remove(mainPanel);
-                parent.add(game);
-                parent.setVisible(true);
-                game.action();
+                Main.panelManager.setStatus(PanelManager.Status.HARD_GAME);
             }
         });
     }
