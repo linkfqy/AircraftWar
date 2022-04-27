@@ -42,7 +42,7 @@ public class RecordDaoImpl implements RecordDao,Serializable {
         return this;
     }
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     @Override
     public String[][] toStringArray() {
         String[][] result=new String[records.size()][4];
