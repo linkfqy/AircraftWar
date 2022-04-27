@@ -65,7 +65,7 @@ public class RecordDaoImpl implements RecordDao,Serializable {
         try {
             ObjectInputStream ois=new ObjectInputStream(new FileInputStream(path));
             result=(RecordDaoImpl) ois.readObject();
-        }catch (FileNotFoundException e){
+        }catch (FileNotFoundException|InvalidClassException e){
             result=new RecordDaoImpl();
         }catch (Exception e){
             e.printStackTrace();
