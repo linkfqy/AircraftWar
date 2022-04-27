@@ -107,7 +107,9 @@ public class Main {
         String name=JOptionPane.showInputDialog(rankingPanel.getMainPanel(),
                 "太棒了，你在本次游戏中获得了"+game.getScore()+"分！\n"+"在此留下你的大名吧",
                 "请输入名字", JOptionPane.QUESTION_MESSAGE);
-        recordDao.add(name,game.getScore(),new Date());
+        if (name!=null) {
+            recordDao.add(name, game.getScore(), new Date());
+        }
         rankingPanel.refreshTable();
         recordDao.writeToFile(gameMode.getPath());
     }
