@@ -1,8 +1,6 @@
 package edu.hitsz.application;
 
 import javax.swing.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 
 /**
  * @author linkfqy
@@ -16,6 +14,10 @@ public class StartPanel {
 
     public JPanel getMainPanel() {
         return mainPanel;
+    }
+
+    public boolean isMuted(){
+        return soundComboBox.getSelectedIndex() == 1;
     }
 
     public StartPanel() {
@@ -47,16 +49,5 @@ public class StartPanel {
                 Main.MAIN_LOCK.notify();
             }
         });
-    }
-
-    public static void main(String[] args) {
-        JFrame frame = new JFrame("startPanel");
-        frame.setSize(512,768);
-        frame.setResizable(false);
-        frame.setBounds(0, 0,512,768);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        StartPanel sp=new StartPanel();
-        frame.add(sp.getMainPanel());
-        frame.setVisible(true);
     }
 }

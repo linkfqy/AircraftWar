@@ -4,12 +4,8 @@ import edu.hitsz.dao.RecordDao;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.util.Enumeration;
 
 /**
  * @author linkfqy
@@ -17,46 +13,32 @@ import java.util.Enumeration;
 public class RankingPanel {
     private JPanel mainPanel;
     private JLabel difficultyLabel;
-    private JScrollPane tableScrollPanel;
+    private JScrollPane tableScrollPane;
     private JTable rankingTable;
     private JButton deleteRecordButton;
     private final RecordDao recordDao;
     DefaultTableModel model;
     String[] columnNames = {"名次","玩家名","得分","游戏时间"};
+    int[] preferredColumnWidth = {55,157,68,192};
 
     public JPanel getMainPanel() {
         return mainPanel;
     }
 
     /**
-     * 根据内容自动调整表格列宽
-     * @param table 待调整的表格
+     * 根据预设的数值调整列宽
      */
-    public void fitTableColumns(JTable table) {
-        JTableHeader header = table.getTableHeader();
-        int rowCount = table.getRowCount();
-
-        Enumeration<TableColumn> columns = table.getColumnModel().getColumns();
-        while (columns.hasMoreElements()) {
-            TableColumn column = columns.nextElement();
-            int col = header.getColumnModel().getColumnIndex(column.getIdentifier());
-            int width = (int) table.getTableHeader().getDefaultRenderer()
-                    .getTableCellRendererComponent(table, column.getIdentifier()
-                            , false, false, -1, col).getPreferredSize().getWidth();
-            for (int row = 0; row < rowCount; row++) {
-                int preferredWidth = (int) table.getCellRenderer(row, col).getTableCellRendererComponent(table,
-                        table.getValueAt(row, col), false, false, row, col).getPreferredSize().getWidth();
-                width = Math.max(width, preferredWidth);
-            }
-            header.setResizingColumn(column);
-            column.setWidth(width + table.getIntercellSpacing().width+10);
+    public void fitTableColumns() {
+        TableColumnModel columnModel=rankingTable.getColumnModel();
+        for (int i=0;i< preferredColumnWidth.length;i++){
+            columnModel.getColumn(i).setPreferredWidth(preferredColumnWidth[i]);
         }
     }
 
     public void refreshTable(){
         String[][] tableData = recordDao.getSorted().toStringArray();
         model.setDataVector(tableData,columnNames);
-        fitTableColumns(rankingTable);
+        fitTableColumns();
     }
 
     public void deleteRow(int row){
@@ -71,7 +53,7 @@ public class RankingPanel {
     public RankingPanel (RecordDao recordDao) {
         //调整列标题字体字号
         rankingTable.getTableHeader().setFont(new Font("default", Font.PLAIN, 18));
-        rankingTable.setAutoResizeMode(JTable.AUTO_RESIZE_OFF);
+        // 设置表格模型
         model=new DefaultTableModel(columnNames,0){
             @Override
             public boolean isCellEditable(int rol,int col){
@@ -79,8 +61,11 @@ public class RankingPanel {
             }
         };
         rankingTable.setModel(model);
-        tableScrollPanel.setViewportView(rankingTable);
+        // 绑定Scroll组件
+        tableScrollPane.setViewportView(rankingTable);
+        // 设置难度标签内容
         difficultyLabel.setText("难度："+Main.getGameMode());
+        // 绑定recordDao
         this.recordDao=recordDao;
         refreshTable();
         //删除按钮的监听器
