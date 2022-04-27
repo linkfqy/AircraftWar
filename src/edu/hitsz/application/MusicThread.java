@@ -1,20 +1,10 @@
 package edu.hitsz.application;
 
-import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-
-import javax.sound.sampled.AudioFormat;
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.DataLine;
-import javax.sound.sampled.LineUnavailableException;
-import javax.sound.sampled.SourceDataLine;
-import javax.sound.sampled.UnsupportedAudioFileException;
+import javax.sound.sampled.*;
+import java.io.*;
 
 /**
+ * 单次播放音乐，可随时停止
  * @author linkfqy
  */
 public class MusicThread extends Thread {
@@ -23,9 +13,9 @@ public class MusicThread extends Thread {
     /** 音频文件名 */
     private final String filename;
     private AudioFormat audioFormat;
-    private byte[] samples;
+    protected byte[] samples;
 
-    private boolean stop;
+    protected boolean stop;
     public boolean isStop() {
         return stop;
     }
@@ -67,8 +57,8 @@ public class MusicThread extends Thread {
     }
 
     public void play(InputStream source) throws InterruptedException{
-//        int size = (int) (audioFormat.getFrameSize() * audioFormat.getSampleRate());
-        int size = (int) audioFormat.getFrameSize();
+        int size = (int) (audioFormat.getFrameSize() * audioFormat.getSampleRate());
+//        int size = audioFormat.getFrameSize();
         byte[] buffer = new byte[size];
         //源数据行SourceDataLine是可以写入数据的数据行
         SourceDataLine dataLine = null;
@@ -91,7 +81,6 @@ public class MusicThread extends Thread {
 				//从音频流读取指定的最大数量的数据字节，并将其放入缓冲区中
                 numBytesRead = source.read(buffer, 0, buffer.length);
                 if (stop) {
-                    System.out.println("Interrupted!!");
                     throw new InterruptedException();
                 }
             }
@@ -104,25 +93,17 @@ public class MusicThread extends Thread {
 
     @Override
     public void run() {
+        stop=false;
         InputStream stream = new ByteArrayInputStream(samples);
-        long t1=System.currentTimeMillis();
         try {
-            while (!stop) {
-                stream.reset();
-                play(stream);
-            }
+            play(stream);
         } catch (InterruptedException e) {
-            System.out.println("stopped music");
-            System.out.println(System.currentTimeMillis()-t1);
-        } catch (IOException e) {
-            e.printStackTrace();
-       }
+            // 解除停止标记
+            stop=false;
+        }
     }
-
     public static void main(String[] args) throws InterruptedException {
         MusicThread mt=new MusicThread("src/audios/bgm.wav");
         mt.start();
-        sleep(5000);
-        mt.setStop(true);
     }
 }

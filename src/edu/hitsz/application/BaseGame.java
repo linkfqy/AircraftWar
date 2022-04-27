@@ -5,6 +5,7 @@ import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
 import edu.hitsz.factory.*;
 import edu.hitsz.prop.AbstractProp;
+import edu.hitsz.prop.BombProp;
 
 import javax.swing.*;
 import java.awt.*;
@@ -22,6 +23,21 @@ public class BaseGame extends JPanel {
 
     private int backGroundTop = 0;
     protected BufferedImage backgroundImage;
+    public static final String BGM_PATH = "./src/audios/bgm.wav";
+    public static final String BOSS_BGM_PATH = "./src/audios/bgm_boss.wav";
+    public static final String BOMB_SOUND_PATH = "./src/audios/bomb_explosion.wav";
+    public static final String BULLET_HIT_SOUND_PATH = "./src/audios/bullet_hit.wav";
+    public static final String PROP_SOUND_PATH = "./src/audios/get_supply.wav";
+    public static final String GAME_OVER_SOUND_PATH = "./src/audios/game_over.wav";
+
+    /**
+     * BGM线程，循环播放背景音乐
+     */
+    private final LoopMusicThread bgmThread = new LoopMusicThread(BGM_PATH);
+    /**
+     * Boss BGM线程，循环播放Boss BGM，直至Boss被消灭或游戏结束
+     */
+    private LoopMusicThread bossBgmThread = new LoopMusicThread(BOSS_BGM_PATH);
 
     /**
      * Scheduled 线程池，用于任务调度
@@ -115,13 +131,10 @@ public class BaseGame extends JPanel {
         enemyBullets = new LinkedList<>();
         props = new LinkedList<>();
 
-        ThreadFactory gameThread = new ThreadFactory() {
-            @Override
-            public Thread newThread(Runnable r) {
-                Thread t = new Thread(r);
-                t.setName("BaseGame thread");
-                return t;
-            }
+        ThreadFactory gameThread = r -> {
+            Thread t = new Thread(r);
+            t.setName("Game thread");
+            return t;
         };
         //Scheduled 线程池，用于定时任务调度
         executorService = new ScheduledThreadPoolExecutor(1, gameThread);
@@ -135,6 +148,8 @@ public class BaseGame extends JPanel {
      * 游戏启动入口，执行游戏逻辑
      */
     public void action() {
+        // 循环播放BGM
+        bgmThread.start();
 
         // 定时任务：绘制、对象产生、碰撞判定、击毁及结束判定
         Runnable task = () -> {
@@ -192,6 +207,9 @@ public class BaseGame extends JPanel {
                 // 积累一定分数，且场上无Boss机时产生新的Boss机
                 if (score-lastScore>= bossScoreThreshold && !bossAlive){
                     enemyAircrafts.add(bossEnemyFactory.create());
+                    // 循环播放Boss BGM
+                    bossBgmThread = new LoopMusicThread(BOSS_BGM_PATH);
+                    bossBgmThread.start();
                 }
                 //依概率随机产生敌机
                 else {
@@ -256,6 +274,7 @@ public class BaseGame extends JPanel {
         }
 
         // 敌机撞英雄子弹或英雄机
+        boolean hitEnemyFlag = false;
         for (AbstractEnemy enemyAircraft : enemyAircrafts) {
             if (enemyAircraft.notValid()) {
                 continue;  // 已被其他子弹击毁的敌机，不再检测，避免多个子弹重复击毁同一敌机的判定
@@ -265,10 +284,10 @@ public class BaseGame extends JPanel {
                     continue;
                 }
                 if (enemyAircraft.crash(bullet)) {
-                    // 敌机撞击到英雄机子弹
-                    // 敌机损失一定生命值
+                    // 敌机撞击到英雄机子弹，敌机损失一定生命值
                     enemyAircraft.decreaseHp(bullet.getPower());
                     bullet.vanish();
+                    hitEnemyFlag=true;
                     if (enemyAircraft.notValid()) {
                         score += enemyAircraft.getScore();
                         //打败非普通敌机产生道具补给
@@ -288,11 +307,21 @@ public class BaseGame extends JPanel {
                 heroAircraft.decreaseHp(Integer.MAX_VALUE);
             }
         }
+        // 若本次循环中击中过敌机，播放音效
+        if (hitEnemyFlag) {
+            new MusicThread(BULLET_HIT_SOUND_PATH).start();
+        }
 
         // 我方获得道具，道具生效
         for (AbstractProp prop : props){
             if (heroAircraft.crash(prop)){
                 prop.work(heroAircraft);
+                // 播放相应道具音效
+                if (prop instanceof BombProp){
+                    new MusicThread(BaseGame.BOMB_SOUND_PATH).start();
+                }else{
+                    new MusicThread(BaseGame.PROP_SOUND_PATH).start();
+                }
             }
         }
     }
@@ -320,8 +349,10 @@ public class BaseGame extends JPanel {
                 break;
             }
         }
+        // Boss在此次循环中被打爆，重新开始计分并停止BGM播放
         if (bossAlive && !newBossAlive){
             lastScore=score;
+            bossBgmThread.setStop(true);
         }
         bossAlive=newBossAlive;
     }
@@ -334,6 +365,11 @@ public class BaseGame extends JPanel {
         gameOverFlag = true;
         System.out.println("Game Over!");
 
+        // 停止BGM播放
+        bgmThread.setStop(true);
+        bossBgmThread.setStop(true);
+        // 播放游戏结束音效
+        new MusicThread(GAME_OVER_SOUND_PATH).start();
         this.setVisible(false);
         synchronized (Main.MAIN_LOCK){
             Main.MAIN_LOCK.notify();
