@@ -1,12 +1,6 @@
-package edu.hitsz.gui;
-
-import edu.hitsz.application.Game;
-import edu.hitsz.application.Main;
-import edu.hitsz.application.PanelManager;
-import edu.hitsz.factory.GameFactory;
+package edu.hitsz.application;
 
 import javax.swing.*;
-import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -30,24 +24,27 @@ public class StartPanel {
         soundComboBox.setSelectedIndex(0);
 
         //简单模式按钮的监听器
-        easyModeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Main.panelManager.setStatus(PanelManager.Status.EASY_GAME);
+        easyModeButton.addActionListener(e -> {
+            Main.setGameMode(Main.GameMode.EASY);
+            mainPanel.setVisible(false);
+            synchronized (Main.MAIN_LOCK){
+                Main.MAIN_LOCK.notify();
             }
         });
         //普通模式按钮的监听器
-        normalModeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Main.panelManager.setStatus(PanelManager.Status.NORMAL_GAME);
+        normalModeButton.addActionListener(e -> {
+            Main.setGameMode(Main.GameMode.NORMAL);
+            mainPanel.setVisible(false);
+            synchronized (Main.MAIN_LOCK){
+                Main.MAIN_LOCK.notify();
             }
         });
         //困难模式按钮的监听器
-        hardModeButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Main.panelManager.setStatus(PanelManager.Status.HARD_GAME);
+        hardModeButton.addActionListener(e -> {
+            Main.setGameMode(Main.GameMode.HARD);
+            mainPanel.setVisible(false);
+            synchronized (Main.MAIN_LOCK){
+                Main.MAIN_LOCK.notify();
             }
         });
     }

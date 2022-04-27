@@ -52,12 +52,17 @@ public class ImageManager {
      */
     private static final String IMG_PATH ="src/images/";
 
-    public static BufferedImage BACKGROUND_IMAGE;
+    public static BufferedImage BACKGROUND_IMAGE_EASY;
+    public static BufferedImage BACKGROUND_IMAGE_NORMAL;
+    public static BufferedImage BACKGROUND_IMAGE_HARD;
 
     static {
         try {
 
-            BACKGROUND_IMAGE = ImageIO.read(new FileInputStream("src/images/bg.jpg"));
+            BACKGROUND_IMAGE_EASY = ImageIO.read(new FileInputStream("src/images/bg.jpg"));
+            BACKGROUND_IMAGE_NORMAL = ImageIO.read(new FileInputStream("src/images/bg2.jpg"));
+            BACKGROUND_IMAGE_HARD = ImageIO.read(new FileInputStream("src/images/bg5.jpg"));
+
 
             for (Map.Entry<Class<?>,String> entry : CLASS_FILENAME_MAP.entrySet()){
                 CLASSNAME_IMAGE_MAP.put(

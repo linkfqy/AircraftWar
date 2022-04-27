@@ -3,17 +3,12 @@ package edu.hitsz.application;
 import edu.hitsz.aircraft.*;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
-import edu.hitsz.dao.Record;
-import edu.hitsz.dao.RecordDao;
-import edu.hitsz.dao.RecordDaoImpl;
 import edu.hitsz.factory.*;
-import edu.hitsz.gui.RankingPanel;
 import edu.hitsz.prop.AbstractProp;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.*;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
@@ -23,9 +18,10 @@ import java.util.concurrent.*;
  *
  * @author hitsz
  */
-public class Game extends JPanel {
+public class BaseGame extends JPanel {
 
     private int backGroundTop = 0;
+    protected BufferedImage backgroundImage;
 
     /**
      * Scheduled 线程池，用于任务调度
@@ -47,6 +43,9 @@ public class Game extends JPanel {
 
     private boolean gameOverFlag = false;
     private int score = 0;
+    public int getScore(){
+        return score;
+    }
     /**
      * Boss机最后一次被打爆时的分数，score-lastScore>=bossScoreThreshold，且无Boss机时产生新的Boss机
      */
@@ -63,49 +62,6 @@ public class Game extends JPanel {
     private CycleManager enemyGenCycle=new CycleManager(600);
     private CycleManager enemyShootCycle=new CycleManager(600);
     private CycleManager heroShootCycle= new CycleManager(150);
-
-    /**
-     * 游戏记录Dao，用于实现排行榜功能
-     */
-    private RecordDao recordDao;
-    private static final String RECORD_DAO_PATH="./Records.dat";
-
-    /**
-     * 从文件读取recordDao
-     */
-    private void readRecordDao(){
-        try {
-            ObjectInputStream ois=new ObjectInputStream(new FileInputStream(RECORD_DAO_PATH));
-            recordDao=(RecordDao) ois.readObject();
-        }catch (FileNotFoundException e){
-            recordDao=new RecordDaoImpl();
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-    /**
-     * 向文件写入recordDao
-     */
-    private void writeRecordDao(){
-        try {
-            ObjectOutputStream oos=new ObjectOutputStream(new FileOutputStream(RECORD_DAO_PATH));
-            oos.writeObject(recordDao);
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-    }
-    /**
-     * 控制台输出排行榜
-     */
-    private void addAndPrintRanking(){
-        recordDao.add("testUserName",score,new Date());
-        System.out.println("*".repeat(20)+"排行榜"+"*".repeat(20));
-        List<Record> ranking=recordDao.getSorted();
-        for (int i=0;i<ranking.size();i++){
-            Record r=ranking.get(i);
-            System.out.println("第"+(i+1)+"名："+r.getName()+", "+r.getScore()+", "+r.getDate());
-        }
-    }
 
     /**
      * 敌机工厂列表，依概率生成敌机
@@ -151,21 +107,19 @@ public class Game extends JPanel {
         return -1;
     }
 
-    public Game() {
+    public BaseGame() {
         heroAircraft = HeroAircraft.getInstance();
 
         enemyAircrafts = new LinkedList<>();
         heroBullets = new LinkedList<>();
         enemyBullets = new LinkedList<>();
         props = new LinkedList<>();
-        readRecordDao();
-
 
         ThreadFactory gameThread = new ThreadFactory() {
             @Override
             public Thread newThread(Runnable r) {
                 Thread t = new Thread(r);
-                t.setName("Game thread");
+                t.setName("BaseGame thread");
                 return t;
             }
         };
@@ -214,20 +168,9 @@ public class Game extends JPanel {
             //每个时刻重绘界面
             repaint();
 
-            //调试输出
-            debug();
-
             // 游戏结束检查
             if (heroAircraft.getHp() <= 0) {
-                // 游戏结束
-                executorService.shutdown();
-                gameOverFlag = true;
-                System.out.println("Game Over!");
-
-                Main.panelManager.setStatus(PanelManager.Status.RANKING);
-
-                addAndPrintRanking();
-                writeRecordDao();
+                gameOverAction();
             }
 
         };
@@ -383,8 +326,18 @@ public class Game extends JPanel {
         bossAlive=newBossAlive;
     }
 
-    private void debug(){
-//        System.out.println("BulletNum:"+heroBullets.size());
+    /**
+     * 游戏结束
+     */
+    protected void gameOverAction(){
+        executorService.shutdown();
+        gameOverFlag = true;
+        System.out.println("Game Over!");
+
+        this.setVisible(false);
+        synchronized (Main.MAIN_LOCK){
+            Main.MAIN_LOCK.notify();
+        }
     }
 
 
@@ -403,8 +356,8 @@ public class Game extends JPanel {
         super.paint(g);
 
         // 绘制背景,图片滚动
-        g.drawImage(ImageManager.BACKGROUND_IMAGE, 0, this.backGroundTop - Main.WINDOW_HEIGHT, null);
-        g.drawImage(ImageManager.BACKGROUND_IMAGE, 0, this.backGroundTop, null);
+        g.drawImage(backgroundImage, 0, this.backGroundTop - Main.WINDOW_HEIGHT, null);
+        g.drawImage(backgroundImage, 0, this.backGroundTop, null);
         this.backGroundTop += 1;
         if (this.backGroundTop == Main.WINDOW_HEIGHT) {
             this.backGroundTop = 0;
