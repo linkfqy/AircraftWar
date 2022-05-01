@@ -1,6 +1,10 @@
 package edu.hitsz.prop;
 
-import edu.hitsz.aircraft.AbstractAircraft;
+import edu.hitsz.aircraft.AbstractEnemy;
+import edu.hitsz.basic.AbstractFlyingObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author linkfqy
@@ -13,9 +17,22 @@ public class BombProp extends AbstractProp {
         super(locationX,locationY);
     }
 
+    private final List<AbstractFlyingObject> subscribers = new ArrayList<>();
+
     @Override
-    public void work(AbstractAircraft aircraft) {
-        super.work(aircraft);
-        System.out.println("BombSupply active!");
+    public int work() {
+        super.work();
+        int scoreToAdd=0;
+        for (AbstractFlyingObject obj:subscribers) {
+            obj.vanish();
+            if (obj instanceof AbstractEnemy){
+                scoreToAdd+=((AbstractEnemy) obj).getScore();
+            }
+        }
+        return scoreToAdd;
+    }
+
+    public void addSubscriber(AbstractFlyingObject flyingObj){
+        subscribers.add(flyingObj);
     }
 }

@@ -313,17 +313,24 @@ public class BaseGame extends JPanel {
         }
 
         // 我方获得道具，道具生效
-        for (AbstractProp prop : props){
+        props.forEach(prop -> {
             if (heroAircraft.crash(prop)){
-                prop.work(heroAircraft);
-                // 播放相应道具音效
-                if (prop instanceof BombProp){
+                // 区别对待炸弹道具，因为其生效的方式不同
+                if (prop instanceof BombProp) {
+                    enemyBullets.forEach(baseBullet -> ((BombProp) prop).addSubscriber(baseBullet));
+                    enemyAircrafts.forEach(aircraft -> {
+                        if (!(aircraft instanceof BossEnemy)){
+                            ((BombProp) prop).addSubscriber(aircraft);
+                        }
+                    });
+                    score += prop.work();
                     new MusicThread(BaseGame.BOMB_SOUND_PATH).start();
                 }else{
+                    prop.work(heroAircraft);
                     new MusicThread(BaseGame.PROP_SOUND_PATH).start();
                 }
             }
-        }
+        });
     }
 
     /**

@@ -5,6 +5,8 @@ import edu.hitsz.application.Main;
 import edu.hitsz.basic.AbstractFlyingObject;
 
 /**
+ * 抽象道具类。
+ * 提供了两种生效的方式，子类必须实现其中之一
  * @author linkfqy
  */
 public abstract class AbstractProp extends AbstractFlyingObject {
@@ -17,10 +19,19 @@ public abstract class AbstractProp extends AbstractFlyingObject {
 
     /**
      * 道具作用于英雄机
-     * 作用后必须销毁道具
      */
     public void work(AbstractAircraft aircraft){
+        // 道具生效后必须销毁道具
         vanish();
+    }
+
+    /**
+     * 道具生效后产生加分
+     */
+    public int work(){
+        // 道具生效后必须销毁道具
+        vanish();
+        return 0;
     }
 
     @Override
