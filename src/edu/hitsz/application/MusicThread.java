@@ -23,6 +23,11 @@ public class MusicThread extends Thread {
         this.stop = stop;
     }
 
+    protected static boolean muted;
+    public static void setMuted(boolean muted1){
+        muted=muted1;
+    }
+
     public MusicThread(String filename) {
         //初始化filename
         this.filename = filename;
@@ -56,9 +61,8 @@ public class MusicThread extends Thread {
         return samples;
     }
 
-    public void play(InputStream source) throws InterruptedException{
+    public void playOnce(InputStream source) throws InterruptedException{
         int size = (int) (audioFormat.getFrameSize() * audioFormat.getSampleRate());
-//        int size = audioFormat.getFrameSize();
         byte[] buffer = new byte[size];
         //源数据行SourceDataLine是可以写入数据的数据行
         SourceDataLine dataLine = null;
@@ -91,8 +95,15 @@ public class MusicThread extends Thread {
         dataLine.close();
     }
 
+    protected void play(InputStream stream)throws InterruptedException{
+        playOnce(stream);
+    }
+
     @Override
     public void run() {
+        if (muted) {
+            return;
+        }
         stop=false;
         InputStream stream = new ByteArrayInputStream(samples);
         try {

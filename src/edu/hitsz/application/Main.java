@@ -95,6 +95,7 @@ public class Main {
         BaseGame game = GameFactory.newGame(gameMode);
         frame.add(game);
         frame.setVisible(true);
+        MusicThread.setMuted(startPanel.isMuted());
         game.action();
         waitFor(game);
 

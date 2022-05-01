@@ -15,21 +15,17 @@ public class LoopMusicThread extends MusicThread {
     }
 
     @Override
-    public void run() {
-        stop=false;
-        InputStream stream = new ByteArrayInputStream(samples);
+    protected void play(InputStream stream)throws InterruptedException{
         try {
             while (!stop) {
                 stream.reset();
-                play(stream);
+                playOnce(stream);
             }
-        } catch (InterruptedException e) {
-            // 解除停止标记
-            stop=false;
         } catch (IOException e) {
             e.printStackTrace();
-       }
+        }
     }
+
     public static void main(String[] args) throws InterruptedException {
         LoopMusicThread mt=new LoopMusicThread("src/audios/bgm.wav");
         mt.start();
