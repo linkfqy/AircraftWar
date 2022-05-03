@@ -13,7 +13,12 @@ public class EliteEnemyFactory extends AbstractEnemyFactory {
         return new EliteEnemy(
                 (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.get(EliteEnemy.class).getWidth())),
                 (int) (Math.random() * Main.WINDOW_HEIGHT * 0.2),
-                (Main.RAND.nextInt(2)*2-1)*BASE_SPEED/2,BASE_SPEED,BASE_HP*5
+                (Main.RAND.nextInt(2)*2-1)* baseSpeed /2, baseSpeed, getHp()
         );
+    }
+
+    @Override
+    public int getHp() {
+        return (int)(baseHp*5);
     }
 }

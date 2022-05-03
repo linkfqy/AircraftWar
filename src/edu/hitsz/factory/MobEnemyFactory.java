@@ -13,7 +13,12 @@ public class MobEnemyFactory extends AbstractEnemyFactory {
         return new MobEnemy(
                 (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.get(MobEnemy.class).getWidth())),
                 (int) (Math.random() * Main.WINDOW_HEIGHT * 0.2),
-                0,BASE_SPEED,BASE_HP*2
+                0, baseSpeed, getHp()
         );
+    }
+
+    @Override
+    public int getHp() {
+        return (int)(baseHp*2);
     }
 }

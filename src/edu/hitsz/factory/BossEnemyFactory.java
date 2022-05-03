@@ -13,7 +13,12 @@ public class BossEnemyFactory extends AbstractEnemyFactory {
         return new BossEnemy(
                 (int) (Math.random() * (Main.WINDOW_WIDTH - ImageManager.get(BossEnemy.class).getWidth())),
                 (int) (Math.random() * Main.WINDOW_HEIGHT * 0.2),
-                BASE_SPEED/2,0,BASE_HP*12+60
+                baseSpeed /2,0, getHp()
         );
+    }
+
+    @Override
+    public int getHp() {
+        return (int)(baseHp*12);
     }
 }

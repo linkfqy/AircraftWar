@@ -1,11 +1,51 @@
 package edu.hitsz.application;
 
+import edu.hitsz.aircraft.HeroAircraft;
+import edu.hitsz.factory.AbstractEnemyFactory;
+
+import java.util.List;
+
+import static java.lang.Math.*;
+
 /**
  * @author linkfqy
  */
 public class NormalGame extends BaseGame{
     public NormalGame(){
         super();
+        // 设定背景图片
         backgroundImage=ImageManager.BACKGROUND_IMAGE_NORMAL;
+    }
+
+    /** 难度增加的次数 */
+    private int t;
+    @Override
+    protected void difficultyInitialization() {
+        t=0;
+        bossEnemyFactory.setBaseHp(60);
+        mobEnemyFactory.setBaseHp(30);
+        eliteEnemyFactory.setBaseHp(30);
+        AbstractEnemyFactory.setBaseSpeed(5);
+        bossScoreThreshold=300;
+        enemyProb= List.of(70,30);
+        enemyGenCycle.setCycleDuration(600);
+
+        HeroAircraft.getInstance().setMaxHp(500);
+        HeroAircraft.getInstance().setHp(500);
+        printInfo("Initial Info");
+    }
+
+    @Override
+    protected void difficultyUpdate() {
+        t++;
+        mobEnemyFactory.setBaseHp(30*sqrt(t/20.0)+30);
+        eliteEnemyFactory.setBaseHp(30*sqrt(t/20.0)+30);
+        AbstractEnemyFactory.setBaseSpeed(min((int)(5+0.5*t),10));
+        bossScoreThreshold = max(300-10*t,200);
+        int p=(int)(100.0*(30+2*t)/(100+2*t));
+        enemyProb=List.of(100-p,p);
+        enemyGenCycle.setCycleDuration(max(600-10*t,300));
+
+        printInfo(String.format("Difficulty Update-%d",t));
     }
 }

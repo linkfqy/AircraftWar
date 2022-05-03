@@ -16,7 +16,7 @@ public class GameFactory {
             case HARD:
                 return new HardGame();
             default:
-                return new BaseGame();
+                return null;
         }
     }
 }

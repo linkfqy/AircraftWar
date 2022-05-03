@@ -19,7 +19,7 @@ import java.util.concurrent.*;
  *
  * @author hitsz
  */
-public class BaseGame extends JPanel {
+public abstract class BaseGame extends JPanel {
 
     private int backGroundTop = 0;
     protected BufferedImage backgroundImage;
@@ -55,7 +55,7 @@ public class BaseGame extends JPanel {
     private final List<BaseBullet> enemyBullets;
     private final List<AbstractProp> props;
 
-    private int enemyMaxNumber = 5;
+    protected int enemyMaxNumber = 5;
 
     private boolean gameOverFlag = false;
     private int score = 0;
@@ -70,27 +70,29 @@ public class BaseGame extends JPanel {
      * 场上是否还有Boss的存活标志
      */
     private boolean bossAlive = false;
-    private int bossScoreThreshold =300;
+    protected int bossScoreThreshold =300;
     private int time = 0;
     /**
      * 敌机生成、敌机射击、本机射击的周期(ms)
      */
-    private CycleManager enemyGenCycle=new CycleManager(600);
-    private CycleManager enemyShootCycle=new CycleManager(600);
-    private CycleManager heroShootCycle= new CycleManager(150);
+    protected CycleManager enemyGenCycle=new CycleManager(600);
+    protected CycleManager enemyShootCycle=new CycleManager(600);
+    protected CycleManager heroShootCycle= new CycleManager(150);
 
+    protected final MobEnemyFactory mobEnemyFactory = new MobEnemyFactory();
+    protected final EliteEnemyFactory eliteEnemyFactory = new EliteEnemyFactory();
+    protected final BossEnemyFactory bossEnemyFactory = new BossEnemyFactory();
     /**
      * 敌机工厂列表，依概率生成敌机
      */
     private final List<AbstractEnemyFactory> enemyFactories = List.of(
-            new MobEnemyFactory(),
-            new EliteEnemyFactory()
+            mobEnemyFactory,
+            eliteEnemyFactory
     );
     /**
      * 敌机概率列表，表示各敌机生成的概率（以100为单位）
      */
-    private final List<Integer> enemyProb = List.of(70,30);
-    private final BossEnemyFactory bossEnemyFactory = new BossEnemyFactory();
+    protected List<Integer> enemyProb = List.of(70,30);
 
     /**
      * 道具工厂列表，依概率生成道具
@@ -103,7 +105,7 @@ public class BaseGame extends JPanel {
     /**
      * 道具概率列表，表示各道具生成的概率（以100为单位）
      */
-    private final List<Integer> propProb = List.of(30,30,30);
+    protected final List<Integer> propProb = List.of(30,30,30);
 
     /**
      * 随机选择器
@@ -145,11 +147,29 @@ public class BaseGame extends JPanel {
     }
 
     /**
+     * 初始化难度相关的参数，各子类有所不同
+     */
+    abstract protected void difficultyInitialization();
+
+    protected void printInfo(String title){
+        System.out.println("-".repeat(20)+title+"-".repeat(20));
+        System.out.printf("HP: Mob=%d Elite=%d Boss=%d\n",mobEnemyFactory.getHp(),eliteEnemyFactory.getHp(),bossEnemyFactory.getHp());
+        System.out.printf("Enemy Base Speed: %d\n",AbstractEnemyFactory.getBaseSpeed());
+        System.out.printf("BossScoreThreshold: %d\n",bossScoreThreshold);
+        System.out.printf("Probability of Elite: %d%%\n",enemyProb.get(1));
+        System.out.printf("Enemy Generate Cycle: %dms\n",enemyGenCycle.getCycleDuration());
+        System.out.println();
+    }
+
+    /**
      * 游戏启动入口，执行游戏逻辑
      */
     public void action() {
         // 循环播放BGM
         bgmThread.start();
+
+        // 初始化难度
+        difficultyInitialization();
 
         // 定时任务：绘制、对象产生、碰撞判定、击毁及结束判定
         Runnable task = () -> {
@@ -157,13 +177,19 @@ public class BaseGame extends JPanel {
             time += timeInterval;
 
             // 周期性生成敌机
-            generateEnemyAction();
+            if (enemyGenCycle.isNewCycle(time)) {
+                generateEnemyAction();
+            }
 
             // 敌机周期性射击
-            enemyShootAction();
+            if (enemyShootCycle.isNewCycle(time)){
+                enemyShootAction();
+            }
 
             // 英雄机周期性射击
-            heroShootAction();
+            if (heroShootCycle.isNewCycle(time)){
+                heroShootAction();
+            }
 
             // 子弹移动
             bulletMoveAction();
@@ -201,36 +227,29 @@ public class BaseGame extends JPanel {
     //***********************
 
     private void generateEnemyAction() {
-        if (enemyGenCycle.isNewCycle(time)) {
-            // 新敌机产生
-            if (enemyAircrafts.size() < enemyMaxNumber) {
-                // 积累一定分数，且场上无Boss机时产生新的Boss机
-                if (score-lastScore>= bossScoreThreshold && !bossAlive){
-                    enemyAircrafts.add(bossEnemyFactory.create());
-                    // 循环播放Boss BGM
-                    bossBgmThread = new LoopMusicThread(BOSS_BGM_PATH);
-                    bossBgmThread.start();
-                }
-                //依概率随机产生敌机
-                else {
-                    enemyAircrafts.add(enemyFactories.get(selectRandomly(enemyProb)).create());
-                }
+        if (enemyAircrafts.size() < enemyMaxNumber) {
+            // 积累一定分数，且场上无Boss机时产生新的Boss机
+            if (score-lastScore>= bossScoreThreshold && !bossAlive){
+                enemyAircrafts.add(bossEnemyFactory.create());
+                // 循环播放Boss BGM
+                bossBgmThread = new LoopMusicThread(BOSS_BGM_PATH);
+                bossBgmThread.start();
+            }
+            //依概率随机产生敌机
+            else {
+                enemyAircrafts.add(enemyFactories.get(selectRandomly(enemyProb)).create());
             }
         }
     }
 
     private void enemyShootAction() {
-        if (enemyShootCycle.isNewCycle(time)){
-            for (AbstractEnemy enemyAircraft : enemyAircrafts){
-                enemyBullets.addAll(enemyAircraft.shoot());
-            }
+        for (AbstractEnemy enemyAircraft : enemyAircrafts){
+            enemyBullets.addAll(enemyAircraft.shoot());
         }
     }
 
     private void heroShootAction() {
-        if (heroShootCycle.isNewCycle(time)){
-            heroBullets.addAll(heroAircraft.shoot());
-        }
+        heroBullets.addAll(heroAircraft.shoot());
     }
 
     private void bulletMoveAction() {
@@ -356,13 +375,19 @@ public class BaseGame extends JPanel {
                 break;
             }
         }
-        // Boss在此次循环中被打爆，重新开始计分并停止BGM播放
+        // Boss在此次循环中被打爆，重新开始计分并停止BGM播放，增加难度
         if (bossAlive && !newBossAlive){
             lastScore=score;
             bossBgmThread.setStop(true);
+            difficultyUpdate();
         }
         bossAlive=newBossAlive;
     }
+
+    /**
+     * 增加难度
+     */
+    abstract protected void difficultyUpdate();
 
     /**
      * 游戏结束
