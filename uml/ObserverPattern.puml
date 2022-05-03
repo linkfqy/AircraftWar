@@ -1,0 +1,22 @@
+@startuml
+class BombProp{
+    - subscribers : List<AbstractFlyingObject>
+    + addSubscriber(AbstractFlyingObject flyingObj) : void
+    + notifySubscribers() : void
+    + work() : int
+}
+abstract class AbstractFlyingObject{
+    + vanish() : void
+}
+abstract class AbstractEnemy{
+    + vanish() : void
+}
+abstract class BaseBullet{
+    + vanish() : void
+}
+AbstractFlyingObject <|-- AbstractEnemy
+AbstractFlyingObject <|-- BaseBullet
+BombProp o--> AbstractFlyingObject
+abstract class BaseGame{}
+BaseGame ..> BombProp
+@enduml

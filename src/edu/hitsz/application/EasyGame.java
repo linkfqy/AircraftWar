@@ -24,6 +24,7 @@ public class EasyGame extends BaseGame {
         AbstractEnemyFactory.setBaseSpeed(5);
         enemyProb = List.of(70,30);
         enemyGenCycle.setCycleDuration(600);
+        enemyMaxNumber=5;
 
         HeroAircraft.getInstance().setMaxHp(200);
         HeroAircraft.getInstance().setHp(200);

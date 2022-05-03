@@ -1,0 +1,25 @@
+@startuml
+
+abstract class BaseGame{
+    + action() : void
+    # {abstract} difficultyInitialization() : void
+    # {abstract} difficultyUpdate() : void
+}
+class EasyGame{
+    # difficultyInitialization() : void
+    # difficultyUpdate() : void
+}
+class NormalGame{
+    # difficultyInitialization() : void
+    # difficultyUpdate() : void
+}
+class HardGame{
+    # difficultyInitialization() : void
+    # difficultyUpdate() : void
+}
+BaseGame <|-- EasyGame
+BaseGame <|-- NormalGame
+BaseGame <|-- HardGame
+class Main{}
+Main ..> BaseGame
+@enduml

@@ -24,15 +24,19 @@ public class BombProp extends AbstractProp {
         super.work();
         int scoreToAdd=0;
         for (AbstractFlyingObject obj:subscribers) {
-            obj.vanish();
             if (obj instanceof AbstractEnemy){
                 scoreToAdd+=((AbstractEnemy) obj).getScore();
             }
         }
+        notifySubscribers();
         return scoreToAdd;
     }
 
     public void addSubscriber(AbstractFlyingObject flyingObj){
         subscribers.add(flyingObj);
+    }
+
+    public void notifySubscribers(){
+        subscribers.forEach(AbstractFlyingObject::vanish);
     }
 }

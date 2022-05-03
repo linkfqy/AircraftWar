@@ -29,6 +29,7 @@ public class NormalGame extends BaseGame{
         bossScoreThreshold=300;
         enemyProb= List.of(70,30);
         enemyGenCycle.setCycleDuration(600);
+        enemyMaxNumber=5;
 
         HeroAircraft.getInstance().setMaxHp(500);
         HeroAircraft.getInstance().setHp(500);
@@ -45,6 +46,7 @@ public class NormalGame extends BaseGame{
         int p=(int)(100.0*(30+2*t)/(100+2*t));
         enemyProb=List.of(100-p,p);
         enemyGenCycle.setCycleDuration(max(600-10*t,300));
+        enemyMaxNumber=min((int)(5+0.5*t),7);
 
         printInfo(String.format("Difficulty Update-%d",t));
     }

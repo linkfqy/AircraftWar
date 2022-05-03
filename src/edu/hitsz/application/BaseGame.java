@@ -151,6 +151,10 @@ public abstract class BaseGame extends JPanel {
      */
     abstract protected void difficultyInitialization();
 
+    /**
+     * 控制台输出难度相关参数
+     * @param title 输出的标题
+     */
     protected void printInfo(String title){
         System.out.println("-".repeat(20)+title+"-".repeat(20));
         System.out.printf("HP: Mob=%d Elite=%d Boss=%d\n",mobEnemyFactory.getHp(),eliteEnemyFactory.getHp(),bossEnemyFactory.getHp());
@@ -158,6 +162,7 @@ public abstract class BaseGame extends JPanel {
         System.out.printf("BossScoreThreshold: %d\n",bossScoreThreshold);
         System.out.printf("Probability of Elite: %d%%\n",enemyProb.get(1));
         System.out.printf("Enemy Generate Cycle: %dms\n",enemyGenCycle.getCycleDuration());
+        System.out.printf("Max Enemy Number: %d\n",enemyMaxNumber);
         System.out.println();
     }
 
