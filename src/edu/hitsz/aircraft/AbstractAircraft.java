@@ -77,7 +77,7 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
      */
     public List<BaseBullet> shoot(){
         return shootStrategy.shoot(this);
-    };
+    }
 
 }
 

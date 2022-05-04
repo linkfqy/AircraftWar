@@ -57,7 +57,6 @@ public abstract class BaseGame extends JPanel {
 
     protected int enemyMaxNumber = 5;
 
-    private boolean gameOverFlag = false;
     private int score = 0;
     public int getScore(){
         return score;
@@ -400,7 +399,6 @@ public abstract class BaseGame extends JPanel {
      */
     protected void gameOverAction(){
         executorService.shutdown();
-        gameOverFlag = true;
         System.out.println("Game Over!");
 
         // 停止BGM播放

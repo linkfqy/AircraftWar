@@ -1,6 +1,5 @@
 package edu.hitsz.application;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -24,10 +23,5 @@ public class LoopMusicThread extends MusicThread {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public static void main(String[] args) throws InterruptedException {
-        LoopMusicThread mt=new LoopMusicThread("src/audios/bgm.wav");
-        mt.start();
     }
 }

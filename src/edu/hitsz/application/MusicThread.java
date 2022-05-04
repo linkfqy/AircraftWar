@@ -113,8 +113,4 @@ public class MusicThread extends Thread {
             stop=false;
         }
     }
-    public static void main(String[] args) throws InterruptedException {
-        MusicThread mt=new MusicThread("src/audios/bgm.wav");
-        mt.start();
-    }
 }
