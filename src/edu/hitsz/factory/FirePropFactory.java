@@ -8,12 +8,7 @@ import edu.hitsz.prop.FireProp;
  */
 public class FirePropFactory extends AbstractPropFactory {
     @Override
-    public FireProp create(AbstractEnemy ea) {
-        return new FireProp(ea.getLocationX(),ea.getLocationY());
-    }
-
-    @Override
-    public FireProp create(int locationX, int locationY) {
-        return new FireProp(locationX,locationY);
+    public FireProp pureCreate(AbstractEnemy enemy) {
+        return new FireProp(enemy.getLocationX(), enemy.getLocationY());
     }
 }

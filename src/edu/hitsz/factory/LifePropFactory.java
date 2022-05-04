@@ -8,12 +8,7 @@ import edu.hitsz.prop.LifeProp;
  */
 public class LifePropFactory extends AbstractPropFactory {
     @Override
-    public LifeProp create(AbstractEnemy ea) {
-        return new LifeProp(ea.getLocationX(),ea.getLocationY());
-    }
-
-    @Override
-    public LifeProp create(int locationX, int locationY) {
-        return new LifeProp(locationX,locationY);
+    public LifeProp pureCreate(AbstractEnemy enemy) {
+        return new LifeProp(enemy.getLocationX(), enemy.getLocationY());
     }
 }

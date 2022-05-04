@@ -2,6 +2,7 @@ package edu.hitsz.application;
 
 import edu.hitsz.aircraft.HeroAircraft;
 import edu.hitsz.factory.AbstractEnemyFactory;
+import edu.hitsz.factory.AbstractPropFactory;
 
 import java.util.List;
 
@@ -29,6 +30,7 @@ public class HardGame extends BaseGame{
         enemyProb= List.of(70,30);
         enemyGenCycle.setCycleDuration(600);
         enemyMaxNumber=5;
+        AbstractPropFactory.setTimeToVanish(8_000);
 
         HeroAircraft.getInstance().setMaxHp(700);
         HeroAircraft.getInstance().setHp(700);

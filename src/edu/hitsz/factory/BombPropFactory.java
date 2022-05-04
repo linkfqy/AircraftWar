@@ -8,12 +8,7 @@ import edu.hitsz.prop.BombProp;
  */
 public class BombPropFactory extends AbstractPropFactory {
     @Override
-    public BombProp create(AbstractEnemy ea) {
-        return new BombProp(ea.getLocationX(),ea.getLocationY());
-    }
-
-    @Override
-    public BombProp create(int locationX, int locationY) {
-        return new BombProp(locationX,locationY);
+    public BombProp pureCreate(AbstractEnemy enemy) {
+        return new BombProp(enemy.getLocationX(), enemy.getLocationY());
     }
 }

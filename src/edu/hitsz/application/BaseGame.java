@@ -163,6 +163,7 @@ public abstract class BaseGame extends JPanel {
         System.out.printf("Probability of Elite: %d%%\n",enemyProb.get(1));
         System.out.printf("Enemy Generate Cycle: %dms\n",enemyGenCycle.getCycleDuration());
         System.out.printf("Max Enemy Number: %d\n",enemyMaxNumber);
+        System.out.printf("Existence Time of Props: %dms\n",AbstractPropFactory.getTimeToVanish());
         System.out.println();
     }
 
