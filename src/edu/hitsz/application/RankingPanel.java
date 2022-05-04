@@ -16,6 +16,7 @@ public class RankingPanel {
     private JScrollPane tableScrollPane;
     private JTable rankingTable;
     private JButton deleteRecordButton;
+    private JButton restartButton;
     private final RecordDao recordDao;
     DefaultTableModel model;
     String[] columnNames = {"名次","玩家名","得分","游戏时间"};
@@ -77,6 +78,13 @@ public class RankingPanel {
                 if (confirm==JOptionPane.YES_OPTION) {
                     deleteRow(row);
                 }
+            }
+        });
+        //重新开始按钮的监听器
+        restartButton.addActionListener(e -> {
+            mainPanel.setVisible(false);
+            synchronized (Main.MAIN_LOCK){
+                Main.MAIN_LOCK.notify();
             }
         });
     }

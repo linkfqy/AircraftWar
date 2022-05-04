@@ -117,9 +117,9 @@ public abstract class AbstractFlyingObject {
         return locationY;
     }
 
-    public void setLocation(double locationX, double locationY){
-        this.locationX = (int) locationX;
-        this.locationY = (int) locationY;
+    public void setLocation(int locationX, int locationY){
+        this.locationX = locationX;
+        this.locationY = locationY;
     }
 
     public int getSpeedX() {

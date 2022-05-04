@@ -48,4 +48,8 @@ public class HeroAircraft extends AbstractAircraft {
         // 英雄机由鼠标控制，不通过forward函数移动
     }
 
+    public void resetLocation(){
+        setLocation(Main.WINDOW_WIDTH / 2,Main.WINDOW_HEIGHT - ImageManager.get(HeroAircraft.class).getHeight());
+    }
+
 }

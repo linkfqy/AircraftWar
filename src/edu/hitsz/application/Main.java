@@ -59,6 +59,7 @@ public class Main {
      * @param panel 等待的界面
      */
     private static void waitFor(JPanel panel){
+        //使用线程锁实现不同界面的切换
         synchronized (MAIN_LOCK){
             //循环等待开始界面被关闭
             while (panel.isVisible()){
@@ -85,33 +86,36 @@ public class Main {
                 WINDOW_WIDTH, WINDOW_HEIGHT);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        //使用线程锁实现不同界面的切换
-        //开始界面
-        StartPanel startPanel = new StartPanel();
-        frame.add(startPanel.getMainPanel());
-        frame.setVisible(true);
-        waitFor(startPanel.getMainPanel());
-        //游戏界面
-        BaseGame game = GameFactory.newGame(gameMode);
-        frame.add(game);
-        frame.setVisible(true);
-        MusicThread.setMuted(startPanel.isMuted());
-        game.action();
-        waitFor(game);
+        //noinspection InfiniteLoopStatement
+        while (true) {
+            //开始界面
+            StartPanel startPanel = new StartPanel();
+            frame.add(startPanel.getMainPanel());
+            frame.setVisible(true);
+            waitFor(startPanel.getMainPanel());
+            //游戏界面
+            BaseGame game = GameFactory.newGame(gameMode);
+            frame.add(game);
+            frame.setVisible(true);
+            MusicThread.setMuted(startPanel.isMuted());
+            game.action();
+            waitFor(game);
 
-        //排行榜数据
-        RecordDao recordDao= RecordDaoImpl.readFromFile(gameMode.getPath());
-        //排行榜界面
-        RankingPanel rankingPanel = new RankingPanel(recordDao);
-        frame.add(rankingPanel.getMainPanel());
-        frame.setVisible(true);
-        String name=JOptionPane.showInputDialog(rankingPanel.getMainPanel(),
-                "太棒了，你在本次游戏中获得了"+game.getScore()+"分！\n"+"在此留下你的大名吧",
-                "请输入名字", JOptionPane.QUESTION_MESSAGE);
-        if (name!=null) {
-            recordDao.add(name, game.getScore(), new Date());
+            //排行榜数据
+            RecordDao recordDao = RecordDaoImpl.readFromFile(gameMode.getPath());
+            //排行榜界面
+            RankingPanel rankingPanel = new RankingPanel(recordDao);
+            frame.add(rankingPanel.getMainPanel());
+            frame.setVisible(true);
+            String name = JOptionPane.showInputDialog(rankingPanel.getMainPanel(),
+                    "太棒了，你在本次游戏中获得了" + game.getScore() + "分！\n" + "在此留下你的大名吧",
+                    "请输入名字", JOptionPane.QUESTION_MESSAGE);
+            if (name != null) {
+                recordDao.add(name, game.getScore(), new Date());
+            }
+            rankingPanel.refreshTable();
+            recordDao.writeToFile(gameMode.getPath());
+            waitFor(rankingPanel.getMainPanel());
         }
-        rankingPanel.refreshTable();
-        recordDao.writeToFile(gameMode.getPath());
     }
 }

@@ -127,6 +127,7 @@ public abstract class BaseGame extends JPanel {
 
     public BaseGame() {
         heroAircraft = HeroAircraft.getInstance();
+        heroAircraft.resetLocation();
 
         enemyAircrafts = new LinkedList<>();
         heroBullets = new LinkedList<>();
