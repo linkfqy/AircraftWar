@@ -25,6 +25,11 @@ public class FireProp extends AbstractProp {
             aircraft.setShootStrategy(new HeroShootStrategyL3());
         }else if (strategy instanceof HeroShootStrategyL3){
             aircraft.setShootStrategy(new HeroShootStrategyL5());
+        }else if (strategy instanceof HeroShootStrategyL5){
+            int newPower=aircraft.getPower()+1;
+            System.out.printf("Power UP: %d\n",newPower);
+            aircraft.setPower(newPower);
+            return;
         }
         //等待10秒后减小火力
         Runnable sleepAndReduce = ()->{

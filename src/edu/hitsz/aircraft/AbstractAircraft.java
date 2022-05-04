@@ -60,6 +60,10 @@ public abstract class AbstractAircraft extends AbstractFlyingObject {
         return power;
     }
 
+    public void setPower(int newPower){
+        power=newPower;
+    }
+
     public int getDirection() {
         return direction;
     }
