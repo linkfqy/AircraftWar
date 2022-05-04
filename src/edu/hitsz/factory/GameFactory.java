@@ -16,7 +16,8 @@ public class GameFactory {
             case HARD:
                 return new HardGame();
             default:
-                return null;
+                System.out.println("ERROR: UNEXPECTED GAME MODE");
+                return new EasyGame();
         }
     }
 }
