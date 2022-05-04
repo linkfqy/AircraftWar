@@ -1,15 +1,25 @@
 @startuml
 abstract class AbstractEnemyFactory{
+    # baseHp:double
+    # {static} baseSpeed:int
     + {abstract} create():AbstractEnemy
+    + {abstract} getHp():int
+    + getBaseHp():double
+    + setBaseHp(double):void
+    + {static} getBaseSpeed():int
+    + {static} setBaseSpeed(int):void
 }
 class MobEnemyFactory{
     + create():MobEnemy
+    + getHp():int
 }
 class EliteEnemyFactory{
     + create():EliteEnemy
+    + getHp():int
 }
 class BossEnemyFactory{
     + create():BossEnemy
+    + getHp():int
 }
 
 AbstractEnemyFactory <|-- MobEnemyFactory
@@ -19,23 +29,22 @@ AbstractEnemyFactory <|-- BossEnemyFactory
 abstract class AbstractEnemy {
     + AbstractEnemy(int locationX, int locationY, int speedX, int speedY)
     + forward():void
+    + {abstract} getScore():int
 }
 
 class MobEnemy {
     + MobEnemy(int locationX, int locationY, int speedX, int speedY)
-    + shoot():List<BaseBullet>
+    + getScore():int
 }
 
 class EliteEnemy {
-    - direction:int
-    - power:int
     + EliteEnemy(int locationX, int locationY, int speedX, int speedY)
-    + shoot():List<BaseBullet>
+    + getScore():int
 }
 
 class BossEnemy {
     + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
-    + shoot():List<BaseBullet>
+    + getScore():int
 }
 
 AbstractEnemy <|-- MobEnemy
@@ -45,12 +54,11 @@ MobEnemyFactory ..> MobEnemy : <<create>>
 EliteEnemyFactory ..> EliteEnemy : <<create>>
 BossEnemyFactory ..> BossEnemy : <<create>>
 
-class Game {
-    - enemyAircrafts:List<AbstractEnemy>
+abstract class BaseGame {
+    - AbstractEnemy:List<AbstractEnemy>
     - enemyFactories:List<AbstractEnemyFactory>
-    + action():void
 }
 
-Game --> AbstractEnemyFactory
-Game --> AbstractEnemy
+BaseGame --> AbstractEnemyFactory
+BaseGame --> AbstractEnemy
 @enduml

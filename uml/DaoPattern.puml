@@ -17,24 +17,33 @@ class Record{
 }
 interface RecordDao{
     + {abstract} add(String name, int score, Date date):void
+    + {abstract} getByIndex(int index):Record
     + {abstract} deleteById(int recordId):void
     + {abstract} getSorted():List<Record>
+    + {abstract} toStringArray():String[][]
+    + {abstract} writeToFile(String path):void
+    + {abstract} printToConsole():void
 }
 class RecordDaoImpl{
     - records:List<Record>
     - maxId:int
     + RecordDaoImpl()
     + add(String name, int score, Date date):void
+    + getByIndex(int index):Record
     + deleteById(int recordId):void
     + getSorted():List<Record>
+    + toStringArray():String[][]
+    + {static} readFromFile(String path):RecordDaoImpl
+    + writeToFile(String path):void
+    + printToConsole():void
 }
-class Game{
-    - recordDao:RecordDao
+class Main{
+    + {static} main(String[] args):void
 }
 
 RecordDao <|.. RecordDaoImpl
 Record <-- RecordDaoImpl
-Game --> RecordDao
+Main ..> RecordDao
 
 
 @enduml

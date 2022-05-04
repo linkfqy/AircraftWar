@@ -398,7 +398,7 @@ public abstract class BaseGame extends JPanel {
     /**
      * 游戏结束
      */
-    protected void gameOverAction(){
+    private void gameOverAction(){
         executorService.shutdown();
         System.out.println("Game Over!");
 

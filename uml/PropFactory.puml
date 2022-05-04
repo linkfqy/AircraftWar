@@ -1,19 +1,19 @@
 @startuml
 abstract class AbstractPropFactory {
-    + {abstract} create(EnemyAircraft ea):AbstractProp
-    + {abstract} create(int locationX, int locationY):AbstractProp
+    - {static} timeToVanish:int
+    + {static} getTimeToVanish():int
+    + {static} setTimeToVanish(int time):void
+    + create(AbstractEnemy enemy):AbstractProp
+    + {abstract} pureCreate(AbstractEnemy enemy):AbstractProp
 }
 class FirePropFactory {
-    + create(EnemyAircraft ea):FireProp
-    + create(int locationX, int locationY):FireProp
+    + pureCreate(AbstractEnemy enemy):FireProp
 }
 class LifePropFactory {
-    + create(EnemyAircraft ea):LifeProp
-    + create(int locationX, int locationY):LifeProp
+    + pureCreate(AbstractEnemy enemy):LifeProp
 }
 class BombPropFactory {
-    + create(EnemyAircraft ea):BombProp
-    + create(int locationX, int locationY):BombProp
+    + pureCreate(AbstractEnemy enemy):BombProp
 }
 
 AbstractPropFactory <|-- FirePropFactory
@@ -21,23 +21,27 @@ AbstractPropFactory <|-- LifePropFactory
 AbstractPropFactory <|-- BombPropFactory
 
 abstract class AbstractProp {
-    + AbstractProp(int locationX, int locationY, int speedX, int speedY)
+    + AbstractProp(int locationX, int locationY)
     + forward():void
     + work(AbstractAircraft aircraft):void
+    + work():int
 }
 
 class LifeProp {
-    + LifeProp(int locationX, int locationY, int speedX, int speedY)
+    + LifeProp(int locationX, int locationY)
     + work(AbstractAircraft aircraft):void
 }
 
 class BombProp {
-    + BombProp(int locationX, int locationY, int speedX, int speedY)
-    + work(AbstractAircraft aircraft):void
+    - subscribers:List<AbstractFlyingObject>
+    + BombProp(int locationX, int locationY)
+    + work():int
+    + addSubscriber(AbstractFlyingObject):void
+    + notifySubscribers():void
 }
 
 class FireProp {
-    + BombProp(int locationX, int locationY, int speedX, int speedY)
+    + BombProp(int locationX, int locationY)
     + work(AbstractAircraft aircraft):void
 }
 
@@ -48,12 +52,12 @@ LifePropFactory ..> LifeProp : <<create>>
 BombPropFactory ..> BombProp : <<create>>
 FirePropFactory ..> FireProp : <<create>>
 
-class Game {
+abstract class BaseGame {
     - props:List<AbstractProp>
     - propFactories:List<AbstractPropFactory>
     + action():void
 }
 
-Game --> AbstractPropFactory
-Game --> AbstractProp
+BaseGame --> AbstractPropFactory
+BaseGame --> AbstractProp
 @enduml

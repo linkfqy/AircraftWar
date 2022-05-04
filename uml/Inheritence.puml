@@ -12,12 +12,14 @@ abstract class AbstractFlyingObject
     # height:int
     # isValid:boolean
 
+    + AbstractFlyingObject()
     + AbstractFlyingObject(int locationX, int locationY, int speedX, int speedY)
     + forward():void
     + crash(AbstractFlyingObject flyingObject):boolean
     + setLocation(double locationX, double locationY):void
     + getLocationX():int
     + getLocationY():int
+    + getSpeedX():int
     + getSpeedY():int
     + getImage():BufferedImage
     + getWidth():int
@@ -29,12 +31,22 @@ abstract class AbstractAircraft
 {
 	# axHp:int
     # hp:int
+    # power:int
+    # direction:int
+    # shootStrategy:ShootStrategy
     + AbstractAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
     + decreaseHp(int decrease):void
     + increaseHp(int increase):void
     + getHp():int
-    + {abstract} shoot():List<BaseBullet>
- }
+    + setHp(int):void
+    + setMaxHp(int):void
+    + getPower():int
+    + setPower(int):void
+    + getDirection():int
+    + getShootStrategy():ShootStrategy
+    + setShootStrategy(ShootStrategy):void
+    + shoot():List<BaseBullet>
+}
 
 abstract class BaseBullet
 {
@@ -54,17 +66,17 @@ BaseBullet <|-- HeroBullet
 BaseBullet <|-- EnemyBullet
 
 class HeroAircraft {
-    - shootNum:int
-    - power:int
-    - direction:int
-    + HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    - {static} instance:HeroAircraft
+    - HeroAircraft(int locationX, int locationY, int speedX, int speedY, int hp)
+    + {static} getInstance():HeroAircraft
     + forward():void
-    + shoot():List<BaseBullet>
+    + resetLocation():void
 }
 
 abstract class AbstractEnemy {
     + AbstractEnemy(int locationX, int locationY, int speedX, int speedY)
     + forward():void
+    + {abstract} getScore():int
 }
 
 AbstractEnemy <|-- MobEnemy
@@ -73,19 +85,17 @@ AbstractEnemy <|-- BossEnemy
 
 class MobEnemy {
     + MobEnemy(int locationX, int locationY, int speedX, int speedY)
-    + shoot():List<BaseBullet>
+    + getScore():int
 }
 
 class EliteEnemy {
-    - direction:int
-    - power:int
     + EliteEnemy(int locationX, int locationY, int speedX, int speedY)
-    + shoot():List<BaseBullet>
+    + getScore():int
 }
 
 class BossEnemy {
     + EliteEnemy(int locationX, int locationY, int speedX, int speedY, int hp)
-    + shoot():List<BaseBullet>
+    + getScore():int
 }
 
 class HeroBullet {
@@ -97,23 +107,27 @@ class EnemyBullet {
 }
 
 abstract class AbstractProp {
-    + AbstractProp(int locationX, int locationY, int speedX, int speedY)
+    + AbstractProp(int locationX, int locationY)
     + forward():void
     + work(AbstractAircraft aircraft):void
+    + work():int
 }
 
 class LifeProp {
-    + LifeProp(int locationX, int locationY, int speedX, int speedY)
+    + LifeProp(int locationX, int locationY)
     + work(AbstractAircraft aircraft):void
 }
 
 class BombProp {
-    + BombProp(int locationX, int locationY, int speedX, int speedY)
-    + work(AbstractAircraft aircraft):void
+    - subscribers:List<AbstractFlyingObject>
+    + BombProp(int locationX, int locationY)
+    + work():int
+    + addSubscriber(AbstractFlyingObject):void
+    + notifySubscribers():void
 }
 
 class FireProp {
-    + BombProp(int locationX, int locationY, int speedX, int speedY)
+    + BombProp(int locationX, int locationY)
     + work(AbstractAircraft aircraft):void
 }
 

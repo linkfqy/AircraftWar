@@ -8,14 +8,10 @@ class BombProp{
 abstract class AbstractFlyingObject{
     + vanish() : void
 }
-abstract class AbstractEnemy{
-    + vanish() : void
-}
-abstract class BaseBullet{
-    + vanish() : void
-}
+abstract class AbstractEnemy{}
+class EnemyBullet{}
 AbstractFlyingObject <|-- AbstractEnemy
-AbstractFlyingObject <|-- BaseBullet
+AbstractFlyingObject <|-- EnemyBullet
 BombProp o--> AbstractFlyingObject
 abstract class BaseGame{}
 BaseGame ..> BombProp

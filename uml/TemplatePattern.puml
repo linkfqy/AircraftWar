@@ -4,6 +4,20 @@ abstract class BaseGame{
     + action() : void
     # {abstract} difficultyInitialization() : void
     # {abstract} difficultyUpdate() : void
+    # printInfo(String):void
+    + action():void
+    - generateEnemyAction():void
+    - enemyShootAction():void
+    - heroShootAction():void
+    - bulletMoveAction():void
+    - aircraftMoveAction():void
+    - propMoveAction():void
+    - crashCheckAction():void
+    - postProcessAction():void
+    - gameOverAction():void
+    + paint(Graphics):void
+    - paintImageWithPositionRevised(Graphics,List<? extends AbstractFlyingObject>):void
+    - paintScoreAndLife(Graphics):void
 }
 class EasyGame{
     # difficultyInitialization() : void
