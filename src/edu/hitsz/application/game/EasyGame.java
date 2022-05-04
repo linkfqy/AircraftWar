@@ -1,8 +1,9 @@
-package edu.hitsz.application;
+package edu.hitsz.application.game;
 
 import edu.hitsz.aircraft.HeroAircraft;
-import edu.hitsz.factory.AbstractEnemyFactory;
-import edu.hitsz.factory.AbstractPropFactory;
+import edu.hitsz.aircraft.factory.AbstractEnemyFactory;
+import edu.hitsz.application.ImageManager;
+import edu.hitsz.prop.factory.AbstractPropFactory;
 
 import java.util.List;
 

@@ -1,4 +1,4 @@
-package edu.hitsz.factory;
+package edu.hitsz.aircraft.factory;
 
 import edu.hitsz.aircraft.EliteEnemy;
 import edu.hitsz.application.ImageManager;

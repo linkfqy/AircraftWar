@@ -1,4 +1,4 @@
-package edu.hitsz.application;
+package edu.hitsz.application.music;
 
 import javax.sound.sampled.*;
 import java.io.*;

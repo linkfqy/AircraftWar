@@ -1,4 +1,4 @@
-package edu.hitsz.factory;
+package edu.hitsz.prop.factory;
 
 import edu.hitsz.aircraft.AbstractEnemy;
 import edu.hitsz.prop.AbstractProp;

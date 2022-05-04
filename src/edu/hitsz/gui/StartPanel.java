@@ -1,4 +1,6 @@
-package edu.hitsz.application;
+package edu.hitsz.gui;
+
+import edu.hitsz.application.Main;
 
 import javax.swing.*;
 

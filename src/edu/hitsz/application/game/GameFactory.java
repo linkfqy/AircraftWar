@@ -1,4 +1,4 @@
-package edu.hitsz.factory;
+package edu.hitsz.application.game;
 
 import edu.hitsz.application.*;
 

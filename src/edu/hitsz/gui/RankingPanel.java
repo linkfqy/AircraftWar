@@ -1,5 +1,6 @@
-package edu.hitsz.application;
+package edu.hitsz.gui;
 
+import edu.hitsz.application.Main;
 import edu.hitsz.dao.RecordDao;
 
 import javax.swing.*;

@@ -1,8 +1,12 @@
 package edu.hitsz.application;
 
+import edu.hitsz.application.game.BaseGame;
+import edu.hitsz.application.game.GameFactory;
+import edu.hitsz.application.music.MusicThread;
 import edu.hitsz.dao.RecordDao;
 import edu.hitsz.dao.RecordDaoImpl;
-import edu.hitsz.factory.GameFactory;
+import edu.hitsz.gui.RankingPanel;
+import edu.hitsz.gui.StartPanel;
 
 import javax.swing.*;
 import java.awt.*;

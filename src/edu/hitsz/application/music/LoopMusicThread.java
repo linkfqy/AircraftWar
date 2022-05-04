@@ -1,4 +1,4 @@
-package edu.hitsz.application;
+package edu.hitsz.application.music;
 
 import java.io.IOException;
 import java.io.InputStream;

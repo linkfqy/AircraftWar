@@ -1,11 +1,21 @@
-package edu.hitsz.application;
+package edu.hitsz.application.game;
 
 import edu.hitsz.aircraft.*;
+import edu.hitsz.aircraft.factory.AbstractEnemyFactory;
+import edu.hitsz.aircraft.factory.BossEnemyFactory;
+import edu.hitsz.aircraft.factory.EliteEnemyFactory;
+import edu.hitsz.aircraft.factory.MobEnemyFactory;
+import edu.hitsz.application.*;
+import edu.hitsz.application.music.LoopMusicThread;
+import edu.hitsz.application.music.MusicThread;
 import edu.hitsz.bullet.BaseBullet;
 import edu.hitsz.basic.AbstractFlyingObject;
-import edu.hitsz.factory.*;
 import edu.hitsz.prop.AbstractProp;
 import edu.hitsz.prop.BombProp;
+import edu.hitsz.prop.factory.AbstractPropFactory;
+import edu.hitsz.prop.factory.BombPropFactory;
+import edu.hitsz.prop.factory.FirePropFactory;
+import edu.hitsz.prop.factory.LifePropFactory;
 
 import javax.swing.*;
 import java.awt.*;
@@ -112,7 +122,7 @@ public abstract class BaseGame extends JPanel {
      * @return 选择的下标
      */
     private int selectRandomly(List<Integer> pList) {
-        int p=Main.RAND.nextInt(100);
+        int p= Main.RAND.nextInt(100);
         int sum = 0;
         for (int i=0;i<pList.size();i++) {
             sum=sum+pList.get(i);
